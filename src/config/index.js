@@ -1,8 +1,8 @@
 /*
  * @Author: your name
  * @Date: 2020-05-11 10:57:35
- * @LastEditTime: 2020-08-14 19:56:51
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2022-03-01 09:55:22
+ * @LastEditors: 赵婷婷
  * @Description: In User Settings Edit
  * @FilePath: \files\src\config\index.js
  */
@@ -10,7 +10,7 @@ export default {
   /**
    * @description 配置显示在浏览器标签的title
    */
-  title: '公用素材modal',
+  title: '素材弹窗',
   /**
    * @description token在Cookie中存储的天数，默认1天
    */
@@ -28,7 +28,7 @@ export default {
   baseUrl: {
     dev: '',
     pro: '',
-  }, 
+  },
   /**
    * @description 默认打开的首页的路由name值，默认为home
    */
@@ -39,9 +39,9 @@ export default {
   plugin: {
     'error-store': {
       showInHeader: false, // 设为false后不会在顶部显示错误日志徽标
-      developmentOff: true // 设为true后在开发环境不会收集错误信息，方便开发中排查错误
-    }
+      developmentOff: true, // 设为true后在开发环境不会收集错误信息，方便开发中排查错误
+    },
   },
   goBackUrl: 'http://backpack.shandian.design',
   // goBackUrl: 'http://user.shandian.design'
-}
+};

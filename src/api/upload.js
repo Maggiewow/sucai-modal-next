@@ -1,10 +1,10 @@
 /*
  * @Author: your name
  * @Date: 2020-10-15 16:21:50
- * @LastEditTime: 2022-02-22 17:15:11
+ * @LastEditTime: 2022-03-01 09:54:24
  * @LastEditors: 赵婷婷
  * @Description: In User Settings Edit
- * @FilePath: \sucaiku_front_pc\src\api\webupload.js
+ * @FilePath: \sucaiku_front_pc\src\api
  */
 import axios from '@/libs/api.request';
 import { getUploadHeaders } from '@/libs/util';
