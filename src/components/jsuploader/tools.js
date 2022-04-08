@@ -4,33 +4,45 @@
  * @作者: 赵婷婷
  * @Date: 2022-02-22 16:03:19
  * @LastEditors: 赵婷婷
- * @LastEditTime: 2022-02-22 16:25:19
+ * @LastEditTime: 2022-04-08 15:51:26
  */
 
 import SparkMD5 from 'spark-md5';
 
 export const perChunkSize = 5 * 1024 * 1024;
+
+// 原本
+// export const FILE_TYPE_MAP = {
+//   image: { title: '图片', format: ['gif', 'jpg', 'jpeg', 'png', 'bmp', 'webp'] },
+//   video: { title: '视频', format: ['mp4', 'm3u8', 'rmvb', 'avi', 'swf', '3gp', 'mkv', 'flv'] },
+//   voice: { title: '音频', format: ['wav', 'mp3'] },
+//   text: {
+//     title: '文本',
+//     format: [
+//       'doc',
+//       'txt',
+//       'docx',
+//       'pages',
+//       'epub',
+//       'pdf',
+//       'numbers',
+//       'csv',
+//       'xls',
+//       'xlsx',
+//       'keynote',
+//       'ppt',
+//       'pptx',
+//     ],
+//   },
+// };
+
 export const FILE_TYPE_MAP = {
   image: { title: '图片', format: ['gif', 'jpg', 'jpeg', 'png', 'bmp', 'webp'] },
-  video: { title: '视频', format: ['mp4', 'm3u8', 'rmvb', 'avi', 'swf', '3gp', 'mkv', 'flv'] },
-  voice: { title: '音频', format: ['wav', 'mp3'] },
+  video: { title: '视频', format: ['mp4', 'mov', '3gp', 'mxf'] },
+  voice: { title: '音频', format: ['wav', 'wma', 'aac', 'mp3'] },
   text: {
     title: '文本',
-    format: [
-      'doc',
-      'txt',
-      'docx',
-      'pages',
-      'epub',
-      'pdf',
-      'numbers',
-      'csv',
-      'xls',
-      'xlsx',
-      'keynote',
-      'ppt',
-      'pptx',
-    ],
+    format: ['doc', 'docx', 'pdf', 'csv', 'xls', 'xlsx'],
   },
 };
 /**
@@ -106,4 +118,20 @@ export const getFileMD5 = (file, callback) => {
   };
 
   loadNext();
+};
+// 计算每片的md5 调试用
+export const getOnePieceFileMD5 = (file, callback) => {
+  let chunkObj = {}; // index:blob
+  //声明必要的变量
+  let fileReader = new FileReader(),
+    // 创建md5对象（基于SparkMD5）
+    spark = new SparkMD5();
+
+  fileReader.readAsBinaryString(file);
+  //每块文件读取完毕之后的处理
+  fileReader.onload = (e) => {
+    //每块交由sparkMD5进行计算
+    spark.appendBinary(e.target.result);
+    callback(spark.end());
+  };
 };
