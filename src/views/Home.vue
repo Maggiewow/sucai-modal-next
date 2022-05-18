@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-07-23 09:48:43
- * @LastEditTime: 2022-02-25 10:13:50
+ * @LastEditTime: 2022-05-18 10:49:33
  * @LastEditors: 赵婷婷
  * @Description: In User Settings Edit
  * @FilePath: \sucai-modal\src\views\Home.vue
@@ -38,6 +38,20 @@
       websocketUrl="wss://shandianyun-sck.iqilu.com/"
       :showPictureOfArticle="showPictureOfArticle"
     ></sucai-modal-next>
+    <!-- <sucai-modal-next
+      :modalKey="modalKey"
+      :fileLimitNum="fileLimitNum"
+      :type="type"
+      :baseUrl="material_baseUrl"
+      :from="materialFrom"
+      :high_code_rate_limit="highLimit"
+      :showPictureOfArticle="showPictureOfArticle"
+      onlyChooseVideo
+      videoNeedTranscode
+      @handleMaterialModalCancle="handleModalCancle"
+      @chooseVideoOk="chooseVideoOk"
+      websocketUrl="wss://shandianyun-sck.iqilu.com/"
+    ></sucai-modal-next> -->
   </div>
 </template>
 

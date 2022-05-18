@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-07-23 10:38:24
- * @LastEditTime: 2022-02-25 10:09:00
+ * @LastEditTime: 2022-05-18 10:49:17
  * @LastEditors: 赵婷婷
  * @Description: In User Settings Edit
  * @FilePath: \sucai-modal\src\components\sucai-modal.vue
@@ -88,6 +88,11 @@ export default {
       default: false,
     },
     onlyChooseVideo: {
+      type: Boolean,
+      default: false,
+    },
+    // onlyChooseVideo:true时 控制是否转码
+    videoNeedTranscode: {
       type: Boolean,
       default: false,
     },
@@ -181,6 +186,9 @@ export default {
       if (this.materialType == 'video') {
         if (this.onlyChooseVideo) {
           this.$emit('chooseVideoOk', this.choosedMaterials);
+          if (this.videoNeedTranscode) {
+            this.checkIsTranscode(this.choosedMaterials[0].id);
+          }
         } else {
           this.$emit('chooseVideoOk', this.choosedMaterials);
           this.checkIsTranscode(this.choosedMaterials[0].id);
