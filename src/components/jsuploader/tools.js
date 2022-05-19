@@ -4,47 +4,13 @@
  * @作者: 赵婷婷
  * @Date: 2022-02-22 16:03:19
  * @LastEditors: 赵婷婷
- * @LastEditTime: 2022-04-08 15:51:26
+ * @LastEditTime: 2022-05-19 14:21:32
  */
 
 import SparkMD5 from 'spark-md5';
 
 export const perChunkSize = 5 * 1024 * 1024;
 
-// 原本
-// export const FILE_TYPE_MAP = {
-//   image: { title: '图片', format: ['gif', 'jpg', 'jpeg', 'png', 'bmp', 'webp'] },
-//   video: { title: '视频', format: ['mp4', 'm3u8', 'rmvb', 'avi', 'swf', '3gp', 'mkv', 'flv'] },
-//   voice: { title: '音频', format: ['wav', 'mp3'] },
-//   text: {
-//     title: '文本',
-//     format: [
-//       'doc',
-//       'txt',
-//       'docx',
-//       'pages',
-//       'epub',
-//       'pdf',
-//       'numbers',
-//       'csv',
-//       'xls',
-//       'xlsx',
-//       'keynote',
-//       'ppt',
-//       'pptx',
-//     ],
-//   },
-// };
-
-export const FILE_TYPE_MAP = {
-  image: { title: '图片', format: ['gif', 'jpg', 'jpeg', 'png', 'bmp', 'webp'] },
-  video: { title: '视频', format: ['mp4', 'mov', '3gp', 'mxf'] },
-  voice: { title: '音频', format: ['wav', 'wma', 'aac', 'mp3'] },
-  text: {
-    title: '文本',
-    format: ['doc', 'docx', 'pdf', 'csv', 'xls', 'xlsx'],
-  },
-};
 /**
  * @param {*} size
  * @description 单位转换 后端返回的字节数 ==> 前台展示的M、G

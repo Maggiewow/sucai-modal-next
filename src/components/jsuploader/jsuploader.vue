@@ -2,7 +2,7 @@
  * 修改 适应原本的sucai-modal v53 => v56 增加控制并发
  * @Author: your name
  * @Date: 2020-07-23 09:48:43
- * @LastEditTime: 2022-02-25 10:39:48
+ * @LastEditTime: 2022-05-19 14:23:18
  * @LastEditors: 赵婷婷
  * @Description: In User Settings Edit
  * @FilePath: \sucai-modal\src\views\Home.vue
@@ -72,7 +72,8 @@ import QueueChunk from './queue-chunk.vue';
 import CoverList from '../coverList.vue';
 import { Button, Message, Progress, Icon } from 'view-design';
 import { uploadInit, uploadFinish, uploadStop } from '@/api/upload';
-import { calcBytesToSize, getFileMD5, FILE_TYPE_MAP } from './tools';
+import { calcBytesToSize, getFileMD5 } from './tools';
+import { FILE_TYPE_MAP, Base_Content_Type } from './constant';
 
 export default {
   name: 'js-upload',
@@ -192,12 +193,17 @@ export default {
     },
     initCheckUpload(file) {
       let { ext, file_md5, type } = file;
+      if (!type && ext) {
+        type = Base_Content_Type[ext];
+      }
+
       let initArgs = {
         ext, // "jpg"
         MIME_type: type, // "image/jpeg"
         file_md5: file_md5, // "6e259b9afb49248cd60c2dc78aaf9498"
         video_high_code_rate_limit: this.highLimit, // "0"
       };
+
       uploadInit(this.env, initArgs)
         .then((res) => {
           if (res.status == 200) {

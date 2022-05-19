@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-07-23 14:51:28
- * @LastEditTime: 2022-02-16 17:05:46
+ * @LastEditTime: 2022-05-18 15:56:55
  * @LastEditors: 赵婷婷
  * @Description: In User Settings Edit
  * @FilePath: \sucai-modal\src\components\sucaiList.vue
@@ -234,7 +234,7 @@ export default {
             case 'init':
               break;
             case 'reply':
-              console.log(data.data);
+              // console.log(data.data);
               break;
             case 'push':
               // _this.cutTUrls = _this.cutTUrls.concat(data.data.urls)
