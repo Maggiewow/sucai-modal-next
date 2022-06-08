@@ -2,7 +2,7 @@
  * 修改 适应原本的sucai-modal v53 => v56 增加控制并发
  * @Author: your name
  * @Date: 2020-07-23 09:48:43
- * @LastEditTime: 2022-05-19 14:23:18
+ * @LastEditTime: 2022-06-08 10:31:03
  * @LastEditors: 赵婷婷
  * @Description: In User Settings Edit
  * @FilePath: \sucai-modal\src\views\Home.vue
@@ -192,7 +192,13 @@ export default {
       });
     },
     initCheckUpload(file) {
-      let { ext, file_md5, type } = file;
+      let { ext, file_md5, type, size } = file;
+      // 判空：大小为0或者file_md5代表null
+      if (size === 0 || file_md5 === 'd41d8cd98f00b204e9800998ecf8427e') {
+        this.uploadError(file, { msg: '文件可能有损坏，请上传正确的文件格式' });
+        return;
+      }
+
       if (!type && ext) {
         type = Base_Content_Type[ext];
       }
@@ -316,7 +322,7 @@ export default {
       this.uploadList.forEach((item) => {
         item.id === file.id && (item.upload_status = 3);
       });
-      this.$emit('error', file, error.msg || '上传失败');
+      this.$emit('error', error.msg || '上传失败');
     },
     removeFile(item, index) {
       if (item.upload_status === 1) {
