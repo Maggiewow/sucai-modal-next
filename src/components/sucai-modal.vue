@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-07-23 10:38:24
- * @LastEditTime: 2022-05-18 10:49:17
+ * @LastEditTime: 2022-06-14 15:35:40
  * @LastEditors: 赵婷婷
  * @Description: In User Settings Edit
  * @FilePath: \sucai-modal\src\components\sucai-modal.vue
@@ -172,7 +172,7 @@ export default {
   mounted() {
     let vm = this;
     Bus.$on('doMaterials', (list) => {
-      console.log('modal', list);
+      // console.log('modal', list);
       this.choosedMaterials = list;
     });
     config.baseUrl.pro = vm.baseUrl;
@@ -214,7 +214,7 @@ export default {
         this.materialType = this.type;
         let params = { type: this.type, highLimit: this.high_code_rate_limit };
         // Bus.$emit('openModal', params);
-        console.log(this.articleCover);
+        // console.log(this.articleCover);
         this.$refs.materialTabs.watchOpenModal(this.type, this.high_code_rate_limit);
       } else {
         this.$refs.materialTabs.watchCloseModal(this.type, this.high_code_rate_limit);

@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-07-23 11:54:45
- * @LastEditTime: 2022-06-08 10:27:33
+ * @LastEditTime: 2022-06-14 15:35:24
  * @LastEditors: 赵婷婷
  * @Description: In User Settings Edit
  * @FilePath: \sucai-modal\src\components\modal-tabs\image-tabs.vue
@@ -232,7 +232,7 @@ export default {
       }
     });
 
-    console.log('this.$refs.sucaiList', this.$refs.sucaiList);
+    // console.log('this.$refs.sucaiList', this.$refs.sucaiList);
   },
   methods: {
     getFileList(highLimit) {
@@ -314,7 +314,7 @@ export default {
       }
     },
     saveFileToStore(info) {
-      console.log('入库', info, this.from);
+      // console.log('入库', info, this.from);
       if (this.from === 'notSave') {
         this.$emit('afterSaveToStore');
         if (this.materialType === 'video') {

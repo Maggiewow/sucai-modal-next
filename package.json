@@ -5,6 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "release": "standard-version --preset gitmoji-config",
     "lib": "vue-cli-service build --target lib --name sucai-modal-next --dest lib src/components/index.js"
   },
   "dependencies": {
@@ -23,8 +24,11 @@
     "@vue/cli-plugin-babel": "^4.4.0",
     "@vue/cli-service": "^4.4.0",
     "babel-plugin-import": "^1.13.0",
+    "conventional-changelog-gitmoji-config": "^1.4.3",
+    "cz-customizable": "^6.3.0",
     "less": "^2.7.3",
     "less-loader": "^5.0.0",
+    "standard-version": "^9.5.0",
     "vue-template-compiler": "^2.6.11"
   },
   "browserslist": [

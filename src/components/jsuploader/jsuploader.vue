@@ -2,7 +2,7 @@
  * 修改 适应原本的sucai-modal v53 => v56 增加控制并发
  * @Author: your name
  * @Date: 2020-07-23 09:48:43
- * @LastEditTime: 2022-06-08 10:31:03
+ * @LastEditTime: 2022-06-14 15:45:18
  * @LastEditors: 赵婷婷
  * @Description: In User Settings Edit
  * @FilePath: \sucai-modal\src\views\Home.vue
@@ -145,9 +145,11 @@ export default {
         return;
       }
 
-      let fileArr = Object.values(files).map((file, index) => this.modifyFiles(file, index));
-      console.log('handleFileChange fileArr', fileArr);
-      this.allPendingFiles = this.allPendingFiles.concat(fileArr);
+      // let fileArr = Object.values(files).map((file, index) => this.modifyPerFile(file, index));
+      const { newList, newUploadList } = this.modifyFiles(Object.values(files));
+      console.log('modify files', newList, newUploadList);
+      this.$set(this, 'allPendingFiles', this.allPendingFiles.concat(newList));
+      this.$set(this, 'uploadList', this.uploadList.concat(newUploadList));
 
       // 超过5的先传5 剩下的每次上传成功就再开始上传一个
       const onceMaxUploadArr = this.allPendingFiles.splice(0, this.onceMaxNum);
@@ -155,8 +157,43 @@ export default {
         this.beforeUpload(file);
       });
     },
+    modifyFiles(list) {
+      let newUploadList = [];
+      let newList = list.map((file, index) => {
+        // 设置id 防止多文件上传出现错误
+        file.id = new Date().getTime() + '_' + index;
+
+        let arr = file.name ? file.name.split('.') : [];
+        if (arr && arr.length > 0) {
+          file.ext = arr[arr.length - 1];
+        }
+
+        if (!file.type && file.ext) {
+          file.type = Base_Content_Type[file.ext];
+        }
+
+        let { id, name, type, lastModifiedDate, size, ext } = file;
+        let uploadItem = {
+          id,
+          name,
+          type,
+          lastModifiedDate,
+          size,
+          ext,
+          filename: file.name,
+          upload_status: 0, // 文件校验中
+          upload_percent: 0, // 0-100
+        };
+        newUploadList.push(uploadItem);
+
+        return file;
+      });
+
+      return { newList, newUploadList };
+    },
+    // 弃用：逐个添加uploadList可能存在问题
     // 增加文件参数 并添加到uploadList中
-    modifyFiles(file, index) {
+    modifyPerFile(file, index) {
       // 设置id 防止多文件上传出现错误
       file.id = new Date().getTime() + '_' + index;
 
@@ -199,17 +236,12 @@ export default {
         return;
       }
 
-      if (!type && ext) {
-        type = Base_Content_Type[ext];
-      }
-
       let initArgs = {
         ext, // "jpg"
         MIME_type: type, // "image/jpeg"
-        file_md5: file_md5, // "6e259b9afb49248cd60c2dc78aaf9498"
+        file_md5, // "6e259b9afb49248cd60c2dc78aaf9498"
         video_high_code_rate_limit: this.highLimit, // "0"
       };
-
       uploadInit(this.env, initArgs)
         .then((res) => {
           if (res.status == 200) {
@@ -230,7 +262,7 @@ export default {
         })
         .catch((err) => {
           console.log('init catch', err.response);
-          this.uploadError(file, { msg: '文件检查失败' });
+          this.uploadError(file, { msg: err.response.data.msg || '文件检查失败' });
         });
     },
     calcPercent(status, percent) {
@@ -260,9 +292,11 @@ export default {
       });
 
       setTimeout(() => {
+        // {0: Blob, 1: Blob} ==> [['0', Blob], ['1', Blob]]
         let list = Object.entries(this.chunkMap[file.id]);
+
         if (this.$refs.queueDom[i]) {
-          console.log('queue====开始上传分片', i, list);
+          console.log('第' + (i + 1) + '个文件开始上传分片', list);
           this.$refs.queueDom[i].queueUpload(file, list);
         }
       }, 200);

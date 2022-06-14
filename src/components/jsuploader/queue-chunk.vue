@@ -2,7 +2,7 @@
  * 修改 适应原本的sucai-modal
  * @Author: your name
  * @Date: 2020-07-23 09:48:43
- * @LastEditTime: 2022-02-22 15:27:53
+ * @LastEditTime: 2022-06-14 15:32:42
  * @LastEditors: 赵婷婷
  * @Description: In User Settings Edit
  * @FilePath: \sucai-modal\src\views\Home.vue
@@ -14,6 +14,7 @@
 <script>
 import { uploadProcess } from '@/api/upload';
 import Cookies from 'js-cookie';
+import _ from 'lodash';
 
 export default {
   name: 'QueueChunk',
@@ -48,20 +49,21 @@ export default {
   },
   methods: {
     queueUpload(file, list) {
+      this.fileId = file.id;
       this.allCount = list.length;
-      this.chunkList = [...list];
+      this.chunkList = _.cloneDeep(list);
 
       const onceMaxChunkArr = this.chunkList.splice(0, this.max);
       // i最小从0开始
       onceMaxChunkArr.forEach(([i, blob]) => {
-        this.uploadChunk(file, blob, Number(i));
         this.stackList.push(Number(i));
+        this.uploadChunk(file, blob, Number(i));
       });
     },
     // 0 1 3 5 2 4
     uploadChunk(file, blob, index, retryTimes = 0) {
-      if (!blob || retryTimes > 1) {
-        console.log('失败次数过多，不再重试');
+      if (!blob || blob.size === 0 || retryTimes > 1) {
+        console.log('分片为空 或者 失败次数过多不再重试', blob, retryTimes);
         this.$emit('error', file, { msg: '文件上传失败' });
         return;
       }
@@ -72,27 +74,29 @@ export default {
 
       // fd.append('pieceIndex', index);
       uploadProcess(this.env, fd).then((res) => {
-        if (res.status === 200) {
-          // 这一片上传完成
-          this.stackList = this.stackList.filter((i) => i !== index);
-
-          if (this.chunkList && this.chunkList.length > 0) {
-            // 下一片 上传
-            let arr = this.chunkList.splice(0, 1);
-            let [i, blob] = arr[0];
-            this.uploadChunk(file, blob, Number(i));
-            this.stackList.push(Number(i));
-          } else {
-            // 等this.stackList为空 文件所有分片上传完成
-            if (!this.stackList || this.stackList.length === 0) {
-              this.$emit('success', file);
-            }
-          }
-        } else {
+        // 网络问题或者其他问题导致这一片上传失败 重新上传
+        if (res.status !== 200) {
           retryTimes++;
-          // 网络问题或者其他问题导致这一片上传失败 重新上传
           this.uploadChunk(file, blob, index, retryTimes);
+          return;
         }
+
+        // 这一片上传完成
+        this.stackList = this.stackList.filter((i) => i !== index);
+
+        if (!this.chunkList || this.chunkList.length === 0) {
+          // bug: init之后 直接finish了
+          // 等this.stackList为空 文件所有分片上传完成
+          let allLoadOk = !this.stackList || this.stackList.length === 0;
+          allLoadOk && this.$emit('success', file);
+          return;
+        }
+
+        // 下一片 上传
+        let nextPiece = this.chunkList.splice(0, 1)[0];
+        let [i, blob] = nextPiece;
+        this.stackList.push(Number(i));
+        this.uploadChunk(file, blob, Number(i));
       });
     },
 
