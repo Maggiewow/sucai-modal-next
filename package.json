@@ -1,6 +1,6 @@
 {
   "name": "sucai-modal-next",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -49,7 +49,7 @@
   },
   "config": {
     "commitizen": {
-    "path": "node_modules/cz-customizable"
+      "path": "node_modules/cz-customizable"
     }
-}
+  }
 }
