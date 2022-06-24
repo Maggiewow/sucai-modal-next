@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-07-23 11:54:45
- * @LastEditTime: 2022-06-14 15:35:24
+ * @LastEditTime: 2022-06-24 14:52:17
  * @LastEditors: 赵婷婷
  * @Description: In User Settings Edit
  * @FilePath: \sucai-modal\src\components\modal-tabs\image-tabs.vue
@@ -132,18 +132,21 @@ export default {
     },
   },
   watch: {
-    type() {
-      this.materialType = this.type;
-      this.materialVal = 'materialVal1';
-      if (this.type == 'coverImg') {
-        this.materialType = 'image';
-      } else if (this.type == 'transcodeVideo') {
-        this.materialType = 'video';
-        this.materialVal = 'materialVal2';
-      }
-      this.choosedMaterials = [];
-      this.uploadVideoUrl = '';
-      this.showPreview = false;
+    type: {
+      handler() {
+        this.materialType = this.type;
+        this.materialVal = 'materialVal1';
+        if (this.type == 'coverImg') {
+          this.materialType = 'image';
+        } else if (this.type == 'transcodeVideo') {
+          this.materialType = 'video';
+          this.materialVal = 'materialVal2';
+        }
+        this.choosedMaterials = [];
+        this.uploadVideoUrl = '';
+        this.showPreview = false;
+      },
+      immediate: true,
     },
     materialVal() {
       this.page = 1;
@@ -199,7 +202,7 @@ export default {
       modal: this.modalKey,
       uploadVideoUrl: '',
       showPreview: false,
-      materialType: this.type,
+      materialType: '',
       uploadUrl: 'upload/chunk-resume/process',
       ws: null, //webSocket所用
       wsInterval: undefined,

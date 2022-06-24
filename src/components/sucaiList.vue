@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-07-23 14:51:28
- * @LastEditTime: 2022-05-18 15:56:55
+ * @LastEditTime: 2022-06-24 14:49:37
  * @LastEditors: 赵婷婷
  * @Description: In User Settings Edit
  * @FilePath: \sucai-modal\src\components\sucaiList.vue
@@ -88,9 +88,12 @@ export default {
     list() {
       this.materialList = this.list;
     },
-    type() {
-      this.materialType = this.type;
-      this.getFolders();
+    type: {
+      handler() {
+        this.materialType = this.type;
+        this.getFolders();
+      },
+      immediate: true,
     },
   },
   data() {
@@ -107,7 +110,7 @@ export default {
         },
       ],
       choosedMaterials: [],
-      materialType: 'image',
+      materialType: '',
       ws: null, //webSocket所用
       wsInterval: undefined,
       cutTUrls: [],
