@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-07-23 14:51:28
- * @LastEditTime: 2022-06-30 10:55:35
+ * @LastEditTime: 2022-06-30 17:41:39
  * @LastEditors: 赵婷婷
  * @Description: In User Settings Edit
  * @FilePath: \sucai-modal\src\components\sucaiList.vue
@@ -89,9 +89,11 @@ export default {
       this.materialList = this.list;
     },
     type: {
-      handler() {
-        this.materialType = this.type;
-        this.getFolders();
+      handler(type) {
+        if (type) {
+          this.materialType = this.type;
+          this.getFolders();
+        }
       },
       immediate: true,
     },
