@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-07-23 09:48:43
- * @LastEditTime: 2022-05-18 10:49:33
+ * @LastEditTime: 2022-06-30 10:49:35
  * @LastEditors: 赵婷婷
  * @Description: In User Settings Edit
  * @FilePath: \sucai-modal\src\views\Home.vue
@@ -58,7 +58,7 @@
 <script>
 // @ is an alias to /src
 import SucaiModalNext from '@/components/sucai-modal.vue';
-import { Checkbox } from 'iview';
+import { Checkbox } from 'view-design';
 export default {
   name: 'Home',
   components: {

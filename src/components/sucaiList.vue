@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-07-23 14:51:28
- * @LastEditTime: 2022-06-24 14:49:37
+ * @LastEditTime: 2022-06-30 10:55:35
  * @LastEditors: 赵婷婷
  * @Description: In User Settings Edit
  * @FilePath: \sucai-modal\src\components\sucaiList.vue
@@ -9,9 +9,9 @@
 <template>
   <div>
     <Row :gutter="20">
-      <i-col span="5">
+      <i-col span="6">
         <Tree
-          class="folder-tree"
+          class="folder-tree narrow-scroll-bar"
           :data="foldersMenu"
           :load-data="getFolders"
           @on-select-change="chooseFolder"
@@ -317,7 +317,32 @@ export default {
     }
   }
 }
-.folder-tree ::v-deep .ivu-tree-children {
-  overflow: hidden;
+.folder-tree {
+  height: 500px;
+  overflow-y: auto;
+
+  ::v-deep .ivu-tree-children {
+    overflow: hidden;
+  }
+}
+.narrow-scroll-bar::-webkit-scrollbar {
+  /*滚动条整体样式*/
+  width: 5px;
+  /*高宽分别对应横竖滚动条的尺寸*/
+  height: 1px;
+}
+
+.narrow-scroll-bar::-webkit-scrollbar-thumb {
+  /*滚动条里面小方块*/
+  /* border-radius: 6px; */
+  /* box-shadow: inset 0 0 5px rgba(55, 153, 245, 0.2); */
+  background: #aaa;
+}
+
+.narrow-scroll-bar::-webkit-scrollbar-track {
+  /*滚动条里面轨道*/
+  /* box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2); */
+  /* border-radius: 6px; */
+  background: #f2f2f2;
 }
 </style>
