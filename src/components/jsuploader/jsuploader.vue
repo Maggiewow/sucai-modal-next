@@ -2,7 +2,7 @@
  * 修改 适应原本的sucai-modal v53 => v56 增加控制并发
  * @Author: your name
  * @Date: 2020-07-23 09:48:43
- * @LastEditTime: 2022-07-06 11:13:10
+ * @LastEditTime: 2022-07-06 14:18:44
  * @LastEditors: 赵婷婷
  * @Description: In User Settings Edit
  * @FilePath: \sucai-modal\src\views\Home.vue
@@ -143,14 +143,13 @@ export default {
       const files = e.target.files;
       if (!files) return;
 
-      // bugfix: input上传同名文件不触发change方法
-      this.$refs.fileInput.value = '';
-
       let fileCount = files.length + (this.uploadList.length || 0);
       if (fileCount > this.fileNumLimit) {
         // 不符合数量的处理
         Message.warning('文件上传已达到最大上限数');
         // Message.warning('文件数不能超过' + this.fileNumLimit + '个，你已选择了' + fileCount + '个');
+        // bugfix: input上传同名文件不触发change方法
+        this.$refs.fileInput.value = '';
         return;
       }
 
@@ -164,6 +163,8 @@ export default {
       onceMaxUploadArr.forEach((file) => {
         this.beforeUpload(file);
       });
+      // bugfix: input上传同名文件不触发change方法
+      this.$refs.fileInput.value = '';
     },
     modifyFiles(list) {
       let newUploadList = [];
