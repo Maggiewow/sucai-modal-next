@@ -2,7 +2,7 @@
  * 修改 适应原本的sucai-modal v53 => v56 增加控制并发
  * @Author: your name
  * @Date: 2020-07-23 09:48:43
- * @LastEditTime: 2022-06-14 15:45:18
+ * @LastEditTime: 2022-07-06 10:36:41
  * @LastEditors: 赵婷婷
  * @Description: In User Settings Edit
  * @FilePath: \sucai-modal\src\views\Home.vue
@@ -11,6 +11,7 @@
   <div class="js-modal-inner">
     <Button class="upload-btn" type="primary" icon="ios-cloud-upload-outline"
       >上传<input
+        ref="fileInput"
         type="file"
         multiple
         class="select-file-input"
@@ -22,6 +23,7 @@
       <div class="file-item" v-for="(item, index) in uploadList" :key="index">
         <!-- 上传中  v-if="item.upload_status === 0 || item.upload_status === 1"-->
         <queue-chunk
+          v-if="modalKey"
           ref="queueDom"
           :max="onceMaxChunk"
           :env="env"
@@ -97,6 +99,10 @@ export default {
       type: String,
       default: 'prod',
     },
+    modalKey: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -147,7 +153,6 @@ export default {
 
       // let fileArr = Object.values(files).map((file, index) => this.modifyPerFile(file, index));
       const { newList, newUploadList } = this.modifyFiles(Object.values(files));
-      console.log('modify files', newList, newUploadList);
       this.$set(this, 'allPendingFiles', this.allPendingFiles.concat(newList));
       this.$set(this, 'uploadList', this.uploadList.concat(newUploadList));
 
@@ -156,6 +161,9 @@ export default {
       onceMaxUploadArr.forEach((file) => {
         this.beforeUpload(file);
       });
+
+      // bugfix: input上传同名文件不触发change方法
+      this.$refs.fileInput.value = '';
     },
     modifyFiles(list) {
       let newUploadList = [];
@@ -358,11 +366,16 @@ export default {
       });
       this.$emit('error', error.msg || '上传失败');
     },
+    // 终止分片上传过程 防止损耗性能 closemodal时必须终止全部上传过程
     removeFile(item, index) {
-      if (item.upload_status === 1) {
+      if ([1].includes(item.upload_status)) {
         uploadStop(this.env, item.uuid).then((res) => {
           console.log('正在上传中--已终止', res);
         });
+      }
+
+      // 如果此时大视频正在校验中或者上传中 终止queueDom上传
+      if ([0, 1].includes(item.upload_status)) {
         this.$refs.queueDom[index] && this.$refs.queueDom[index].destroy();
       }
 

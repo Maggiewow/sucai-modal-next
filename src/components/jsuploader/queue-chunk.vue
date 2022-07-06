@@ -2,7 +2,7 @@
  * 修改 适应原本的sucai-modal
  * @Author: your name
  * @Date: 2020-07-23 09:48:43
- * @LastEditTime: 2022-06-14 15:32:42
+ * @LastEditTime: 2022-07-06 10:03:25
  * @LastEditors: 赵婷婷
  * @Description: In User Settings Edit
  * @FilePath: \sucai-modal\src\views\Home.vue
@@ -84,11 +84,12 @@ export default {
         // 这一片上传完成
         this.stackList = this.stackList.filter((i) => i !== index);
 
-        if (!this.chunkList || this.chunkList.length === 0) {
-          // bug: init之后 直接finish了
-          // 等this.stackList为空 文件所有分片上传完成
-          let allLoadOk = !this.stackList || this.stackList.length === 0;
-          allLoadOk && this.$emit('success', file);
+        // bug: init之后 直接finish了
+        // 等this.stackList为空 文件所有分片上传完成
+        let noChunks = !this.chunkList || this.chunkList.length === 0;
+        let noStacks = !this.stackList || this.stackList.length === 0;
+        if (this.allCount > 0 && noChunks && noStacks) {
+          this.$emit('success', file);
           return;
         }
 
@@ -123,8 +124,8 @@ export default {
     },
     destroy() {
       console.log('停止分片上传');
-      this.chunkList = [];
-      this.stackList = [];
+      this.$set(this, 'chunkList', []);
+      this.$set(this, 'stackList', []);
       this.allCount = 0;
     },
   },

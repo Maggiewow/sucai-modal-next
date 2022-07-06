@@ -34,6 +34,7 @@
           :accept="materialType"
           :fileNumLimit="fileLimitNum"
           :highLimit="highLimit"
+          :modalKey="modal"
           @error="uploadOnImgError"
           @success="uploadOnSuccess"
           @remove="uploadOnImgRemove"
