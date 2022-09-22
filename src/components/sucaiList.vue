@@ -1,10 +1,10 @@
 <!--
  * @Author: your name
  * @Date: 2020-07-23 14:51:28
- * @LastEditTime: 2022-06-30 17:41:39
- * @LastEditors: 赵婷婷
+ * @LastEditTime: 2022-09-22 10:12:48
+ * @LastEditors: 易木
  * @Description: In User Settings Edit
- * @FilePath: \sucai-modal\src\components\sucaiList.vue
+ * @FilePath: \sucai-modal-next\src\components\sucaiList.vue
 -->
 <template>
   <div>
@@ -20,14 +20,25 @@
       <i-col span="18">
         <div class="chooseTips">已选{{ chooseNum }} 张</div>
         <Row :gutter="20" style="height: 400px">
-          <i-col span="6" v-for="(item, index) of materialList" :key="index" class="materialItem">
+          <i-col
+            span="6"
+            v-for="(item, index) of materialList"
+            :key="index"
+            class="materialItem"
+          >
             <div class="materialItemBox" @click="chooseItemCheck(index)">
               <i class="materialItemThumb" :style="getThumb(item)"></i>
-              <img src="../assets/choosed.png" class="choosed_logo" v-if="item.choosed" />
+              <img
+                src="../assets/choosed.png"
+                class="choosed_logo"
+                v-if="item.choosed"
+              />
               <img src="../assets/noChoosed.png" class="choosed_logo" v-else />
             </div>
             <div class="materialItemInfo">
-              <div class="materialItemTitle" :title="item.name">{{ item.name }}</div>
+              <div class="materialItemTitle" :title="item.name">
+                {{ item.name }}
+              </div>
               <div class="materialItemMore">
                 <span>{{ item.width }}*{{ item.height }}</span>
                 <span>{{ getSize(item.size) }}</span>
@@ -41,19 +52,27 @@
 </template>
 
 <script>
-import Vue from 'vue';
-import { getFolders } from '@/api/data';
-import { renderSize } from '@/libs/util.js';
-import { Row, Col, Tree, Dropdown, DropdownItem, DropdownMenu, Message } from 'view-design';
-Vue.component('Dropdown', Dropdown);
-Vue.component('DropdownMenu', DropdownMenu);
-import config from '@/config';
+import Vue from "vue";
+import { getFolders } from "@/api/data";
+import { renderSize } from "@/libs/util.js";
+import {
+  Row,
+  Col,
+  Tree,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  Message,
+} from "view-design";
+Vue.component("Dropdown", Dropdown);
+Vue.component("DropdownMenu", DropdownMenu);
+import config from "@/config";
 // import 'view-design/dist/styles/iview.css';
-import '@/index.less';
-import Bus from '../libs/bus';
-import voiceLogo from '../assets/voice.png';
+import "@/index.less";
+import Bus from "../libs/bus";
+import voiceLogo from "../assets/voice.png";
 export default {
-  name: 'sucaiList',
+  name: "sucaiList",
   components: {
     [Row.name]: Row,
     [Col.name]: Col,
@@ -77,11 +96,11 @@ export default {
     },
     type: {
       type: String,
-      default: 'image',
+      default: "image",
     },
     websocketUrl: {
       type: String,
-      default: 'wss://sucai.shandian.design/',
+      default: "wss://sucai.shandian.design/",
     },
   },
   watch: {
@@ -104,7 +123,7 @@ export default {
       foldersMenu: [
         {
           id: 0,
-          title: '素材',
+          title: "素材",
           loading: false,
           children: [],
           selected: true,
@@ -112,7 +131,7 @@ export default {
         },
       ],
       choosedMaterials: [],
-      materialType: '',
+      materialType: "",
       ws: null, //webSocket所用
       wsInterval: undefined,
       cutTUrls: [],
@@ -139,21 +158,21 @@ export default {
         if (_this.chooseNum > _this.maxNum - 1) {
           Message.error(`已选素材已超过${this.maxNum}张！`);
         } else {
-          _this.$set(this.materialList[index], 'choosed', true);
+          _this.$set(this.materialList[index], "choosed", true);
           _this.choosedMaterials.push(item);
-          if (_this.materialType === 'video') {
-            _this.initWebSocket('file_id', item.id);
-          }
-          Bus.$emit('doMaterials', _this.choosedMaterials);
+
+          Bus.$emit("doMaterials", _this.choosedMaterials);
         }
       } else {
-        _this.$set(this.materialList[index], 'choosed', false);
-        let order = _this.choosedMaterials.findIndex((choosedItem) => choosedItem.id == item.id);
+        _this.$set(this.materialList[index], "choosed", false);
+        let order = _this.choosedMaterials.findIndex(
+          (choosedItem) => choosedItem.id == item.id
+        );
         if (order || order === 0) {
           _this.choosedMaterials.splice(order, 1);
-          Bus.$emit('doMaterials', _this.choosedMaterials);
+          Bus.$emit("doMaterials", _this.choosedMaterials);
         } else {
-          console.error('逻辑错误', order);
+          console.error("逻辑错误", order);
         }
       }
     },
@@ -199,29 +218,29 @@ export default {
       }
     },
     getThumb(item) {
-      if (this.materialType === 'image') {
-        return 'backgroundImage:url(' + item.thumb + ')';
-      } else if (this.materialType === 'video') {
-        return 'backgroundImage:url(' + item.cover + ')';
-      } else if (this.materialType === 'voice') {
+      if (this.materialType === "image") {
+        return "backgroundImage:url(" + item.thumb + ")";
+      } else if (this.materialType === "video") {
+        return "backgroundImage:url(" + item.cover + ")";
+      } else if (this.materialType === "voice") {
         return 'backgroundImage:url("https://shandianyun-sck.iqilu.com/icon-huatong.png"); background-size: 40% 50%';
       }
     },
     getSize: (item) => renderSize(item),
     chooseFolder(array, attr) {
-      this.$emit('chooseFolder', attr.id);
+      this.$emit("chooseFolder", attr.id);
     },
     initWebSocket(ident_type, ident) {
       let _this = this;
-      let websocketPath = _this.websocketUrl + 'socket.io ';
+      let websocketPath = _this.websocketUrl + "socket.io ";
       _this.ws = new WebSocket(websocketPath);
       let ws = _this.ws;
-      if ('WebSocket' in window) {
+      if ("WebSocket" in window) {
         ws.onopen = function() {
           //当WebSocket创建成功时，触发onopen事件
           let item = {
-            type: 'receive',
-            version: '2.00',
+            type: "receive",
+            version: "2.00",
             request: {
               ident_type: ident_type,
               ident: ident,
@@ -236,33 +255,33 @@ export default {
           //当客户端收到服务端发来的消息时，触发onmessage事件，参数e.data包含server传递过来的数据
           let data = JSON.parse(e.data);
           switch (data.type) {
-            case 'init':
+            case "init":
               break;
-            case 'reply':
+            case "reply":
               // console.log(data.data);
               break;
-            case 'push':
+            case "push":
               // _this.cutTUrls = _this.cutTUrls.concat(data.data.urls)
-              _this.$emit('cutTimePic', data.data.urls);
+              _this.$emit("cutTimePic", data.data.urls);
               break;
           }
         };
         ws.onclose = function(e) {
           //当客户端收到服务端发送的关闭连接请求时，触发onclose事件
           console.log(e);
-          console.log('close');
+          console.log("close");
         };
         ws.onerror = function(e) {
           //如果出现连接、处理、接收、发送数据失败的时候触发onerror事件
           console.log(e);
         };
       } else {
-        console.log('您的浏览器不支持WebSocket');
+        console.log("您的浏览器不支持WebSocket");
       }
     },
     intervalSend() {
       let item = {
-        type: 'ping',
+        type: "ping",
       };
       this.ws.send(JSON.stringify(item));
     },
