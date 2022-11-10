@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-07-23 11:54:45
- * @LastEditTime: 2022-10-07 16:05:07
+ * @LastEditTime: 2022-11-10 15:28:17
  * @LastEditors: 易木
  * @Description: In User Settings Edit
  * @FilePath: \sucai-modal-next\src\components\material-tabs.vue
@@ -366,7 +366,7 @@ export default {
             if (this.materialType === "video") {
               this.choosedMaterials.push(info);
               Bus.$emit("doMaterials", this.choosedMaterials);
-              this.initWebSocket("file_id", res.data.data.id);
+              // this.initWebSocket("file_id", res.data.data.id);
               this.checkIsTranscode(res.data.data.id);
             }
             this.$emit("afterSaveToStore");
