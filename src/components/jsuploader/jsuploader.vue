@@ -2,8 +2,8 @@
  * 修改 适应原本的sucai-modal v53 => v56 增加控制并发
  * @Author: your name
  * @Date: 2020-07-23 09:48:43
- * @LastEditTime: 2022-07-06 14:18:44
- * @LastEditors: 赵婷婷
+ * @LastEditTime: 2023-03-14 15:13:51
+ * @LastEditors: 易木
  * @Description: In User Settings Edit
  * @FilePath: \sucai-modal\src\views\Home.vue
 -->
@@ -25,8 +25,8 @@
         <queue-chunk
           v-if="modalKey"
           ref="queueDom"
+          :baseUrl="sck_url"
           :max="onceMaxChunk"
-          :env="env"
           @setProgress="(percent) => setUploadProgress(percent, index)"
           @success="allChunkUploaded"
           @error="uploadError"
@@ -70,12 +70,12 @@
 </template>
 
 <script>
-import QueueChunk from './queue-chunk.vue';
-import CoverList from '../coverList.vue';
-import { Button, Message, Progress, Icon } from 'view-design';
-import { uploadInit, uploadFinish, uploadStop } from '@/api/upload';
-import { calcBytesToSize, getFileMD5 } from './tools';
-import { FILE_TYPE_MAP, Base_Content_Type } from './constant';
+import QueueChunk from './queue-chunk.vue'
+import CoverList from '../coverList.vue'
+import { Button, Message, Progress, Icon } from 'view-design'
+import { uploadInit, uploadFinish, uploadStop } from '@/api/upload'
+import { calcBytesToSize, getFileMD5 } from './tools'
+import { FILE_TYPE_MAP, Base_Content_Type } from './constant'
 
 export default {
   name: 'js-upload',
@@ -95,9 +95,9 @@ export default {
       type: String | Number,
       default: '0',
     },
-    env: {
+    baseUrl: {
       type: String,
-      default: 'prod',
+      default: 'https://shandianyun-sck.iqilu.com/',
     },
     modalKey: {
       type: Boolean,
@@ -117,71 +117,75 @@ export default {
       allPendingFiles: [],
       onceMaxNum: 5, // 一次最多上传5个文件
       onceMaxChunk: 5, // 每个文件一次最多上传5个分片
-    };
+      sck_url: this.baseUrl,
+    }
   },
   watch: {
     uploadList: {
       deep: true,
       handler() {},
     },
+    baseUrl() {
+      this.sck_url = this.baseUrl
+    },
   },
   computed: {
     // image video text voice
     acceptType() {
       if (!Object.keys(FILE_TYPE_MAP).includes(this.accept)) {
-        Message.error('选择的文件类型错误');
-        return '';
+        Message.error('选择的文件类型错误')
+        return ''
       }
 
-      let fileType = FILE_TYPE_MAP[this.accept].format.map((ext) => `.${ext}`).join(',');
+      let fileType = FILE_TYPE_MAP[this.accept].format.map((ext) => `.${ext}`).join(',')
 
-      return fileType;
+      return fileType
     },
   },
   methods: {
     handleFileChange(e) {
-      const files = e.target.files;
-      if (!files) return;
+      const files = e.target.files
+      if (!files) return
 
-      let fileCount = files.length + (this.uploadList.length || 0);
+      let fileCount = files.length + (this.uploadList.length || 0)
       if (fileCount > this.fileNumLimit) {
         // 不符合数量的处理
-        Message.warning('文件上传已达到最大上限数');
+        Message.warning('文件上传已达到最大上限数')
         // Message.warning('文件数不能超过' + this.fileNumLimit + '个，你已选择了' + fileCount + '个');
         // bugfix: input上传同名文件不触发change方法
-        this.$refs.fileInput.value = '';
-        return;
+        this.$refs.fileInput.value = ''
+        return
       }
 
       // let fileArr = Object.values(files).map((file, index) => this.modifyPerFile(file, index));
-      const { newList, newUploadList } = this.modifyFiles(Object.values(files));
-      this.$set(this, 'allPendingFiles', this.allPendingFiles.concat(newList));
-      this.$set(this, 'uploadList', this.uploadList.concat(newUploadList));
+      const { newList, newUploadList } = this.modifyFiles(Object.values(files))
+      this.$set(this, 'allPendingFiles', this.allPendingFiles.concat(newList))
+      this.$set(this, 'uploadList', this.uploadList.concat(newUploadList))
 
       // 超过5的先传5 剩下的每次上传成功就再开始上传一个
-      const onceMaxUploadArr = this.allPendingFiles.splice(0, this.onceMaxNum);
+      const onceMaxUploadArr = this.allPendingFiles.splice(0, this.onceMaxNum)
       onceMaxUploadArr.forEach((file) => {
-        this.beforeUpload(file);
-      });
+        this.beforeUpload(file)
+      })
       // bugfix: input上传同名文件不触发change方法
-      this.$refs.fileInput.value = '';
+      this.$refs.fileInput.value = ''
     },
     modifyFiles(list) {
-      let newUploadList = [];
+      let newUploadList = []
       let newList = list.map((file, index) => {
         // 设置id 防止多文件上传出现错误
-        file.id = new Date().getTime() + '_' + index;
+        file.id = new Date().getTime() + '_' + index
 
-        let arr = file.name ? file.name.split('.') : [];
+        let arr = file.name ? file.name.split('.') : []
         if (arr && arr.length > 0) {
-          file.ext = arr[arr.length - 1];
+          file.ext = arr[arr.length - 1]
         }
 
         if (!file.type && file.ext) {
-          file.type = Base_Content_Type[file.ext];
+          file.type = Base_Content_Type[file.ext]
         }
 
-        let { id, name, type, lastModifiedDate, size, ext } = file;
+        let { id, name, type, lastModifiedDate, size, ext } = file
         let uploadItem = {
           id,
           name,
@@ -192,27 +196,27 @@ export default {
           filename: file.name,
           upload_status: 0, // 文件校验中
           upload_percent: 0, // 0-100
-        };
-        newUploadList.push(uploadItem);
+        }
+        newUploadList.push(uploadItem)
 
-        return file;
-      });
+        return file
+      })
 
-      return { newList, newUploadList };
+      return { newList, newUploadList }
     },
     // 弃用：逐个添加uploadList可能存在问题
     // 增加文件参数 并添加到uploadList中
     modifyPerFile(file, index) {
       // 设置id 防止多文件上传出现错误
-      file.id = new Date().getTime() + '_' + index;
+      file.id = new Date().getTime() + '_' + index
 
-      let arr = file.name ? file.name.split('.') : [];
+      let arr = file.name ? file.name.split('.') : []
       if (arr && arr.length > 0) {
-        file.ext = arr[arr.length - 1];
+        file.ext = arr[arr.length - 1]
       }
 
-      let newIndex = this.uploadList ? this.uploadList.length : 0;
-      let { id, name, type, lastModifiedDate, size, ext } = file;
+      let newIndex = this.uploadList ? this.uploadList.length : 0
+      let { id, name, type, lastModifiedDate, size, ext } = file
       this.$set(this.uploadList, newIndex, {
         id,
         name,
@@ -223,26 +227,26 @@ export default {
         filename: file.name,
         upload_status: 0, // 文件校验中
         upload_percent: 0, // 0-100
-      });
+      })
 
-      return file;
+      return file
     },
     // 处理上传
     beforeUpload(file) {
       // 得到md5码 获取切片
       getFileMD5(file, (md5, chunkObj) => {
-        file.file_md5 = md5;
-        this.chunkMap[file.id] = chunkObj;
+        file.file_md5 = md5
+        this.chunkMap[file.id] = chunkObj
         // 拿md5码查询后台数据库是否存在此md5码，如果存在则无需上传
-        this.initCheckUpload(file);
-      });
+        this.initCheckUpload(file)
+      })
     },
     initCheckUpload(file) {
-      let { ext, file_md5, type, size } = file;
+      let { ext, file_md5, type, size } = file
       // 判空：大小为0或者file_md5代表null
       if (size === 0 || file_md5 === 'd41d8cd98f00b204e9800998ecf8427e') {
-        this.uploadError(file, { msg: '文件可能有损坏，请上传正确的文件格式' });
-        return;
+        this.uploadError(file, { msg: '文件可能有损坏，请上传正确的文件格式' })
+        return
       }
 
       let initArgs = {
@@ -250,93 +254,93 @@ export default {
         MIME_type: type, // "image/jpeg"
         file_md5, // "6e259b9afb49248cd60c2dc78aaf9498"
         video_high_code_rate_limit: this.highLimit, // "0"
-      };
-      uploadInit(this.env, initArgs)
+      }
+      uploadInit(this.sck_url, initArgs)
         .then((res) => {
           if (res.status == 200) {
-            let { status, uuid, current_chunk, extra } = res.data.data;
+            let { status, uuid, current_chunk, extra } = res.data.data
             // 1：未上传过 2：已存在了 直接finish
             if (status === '1') {
-              file.current_chunk = current_chunk;
-              file.uuid = uuid;
+              file.current_chunk = current_chunk
+              file.uuid = uuid
               // TODO 断点续传
-              this.uploadAllChunk(file);
+              this.uploadAllChunk(file)
             } else if (status === '2') {
-              this.uploadSuccess(file, extra);
+              this.uploadSuccess(file, extra)
             }
           } else {
-            console.log('init Error', file, res);
-            this.uploadError(file, { msg: '文件检查失败' });
+            console.log('init Error', file, res)
+            this.uploadError(file, { msg: '文件检查失败' })
           }
         })
         .catch((err) => {
-          console.log('init catch', err.response);
-          this.uploadError(file, { msg: err.response.data.msg || '文件检查失败' });
-        });
+          console.log('init catch', err.response)
+          this.uploadError(file, { msg: err.response.data.msg || '文件检查失败' })
+        })
     },
     calcPercent(status, percent) {
-      let percentNum = 0;
+      let percentNum = 0
       if (status === 0) {
-        percentNum = 0;
+        percentNum = 0
       } else if (status === 2) {
-        percentNum = 100;
+        percentNum = 100
       } else {
-        percentNum = percent;
+        percentNum = percent
       }
 
-      return percentNum;
+      return percentNum
     },
     setUploadProgress(percent, index) {
-      this.$set(this.uploadList[index], 'upload_percent', percent);
+      this.$set(this.uploadList[index], 'upload_percent', percent)
     },
     uploadAllChunk(file) {
-      let i = 0;
+      let i = 0
       // 文件上传中
       this.uploadList.forEach((item, index) => {
         if (item.id === file.id) {
-          item.upload_status = 1;
-          item.uuid = file.uuid;
-          i = index;
+          item.upload_status = 1
+          item.uuid = file.uuid
+          i = index
         }
-      });
+      })
 
       setTimeout(() => {
         // {0: Blob, 1: Blob} ==> [['0', Blob], ['1', Blob]]
-        let list = Object.entries(this.chunkMap[file.id]);
+        let list = Object.entries(this.chunkMap[file.id])
 
         if (this.$refs.queueDom[i]) {
-          console.log('第' + (i + 1) + '个文件开始上传分片', list);
-          this.$refs.queueDom[i].queueUpload(file, list);
+          console.log('第' + (i + 1) + '个文件开始上传分片', list)
+          this.$refs.queueDom[i].queueUpload(file, list)
         }
-      }, 200);
+      }, 200)
     },
     allChunkUploaded(file) {
       let params = {
         uuid: file.uuid,
         video_high_code_rate_limit: this.highLimit,
-      };
-      uploadFinish(this.env, params)
+      }
+      uploadFinish(this.sck_url, params)
         .then((res) => {
-          let { data, status } = res;
+          let { data, status } = res
           if (status === 200) {
-            this.uploadSuccess(file, data.data);
+            this.uploadSuccess(file, data.data)
           } else {
-            this.uploadError(file, { msg: data.msg || '文件合并失败' });
+            this.uploadError(file, { msg: data.msg || '文件合并失败' })
           }
         })
         .catch((err) => {
-          let errorMessage = '文件合并失败';
+          let errorMessage = '文件合并失败'
           if (this.highLimit == '1') {
-            errorMessage = '上传失败，请检查是否是视频码率过低';
+            errorMessage = '上传失败，请检查是否是视频码率过低'
           }
 
-          console.log('合并失败catch', err);
-          this.uploadError(file, { msg: errorMessage });
-        });
+          console.log('合并失败catch', err)
+          this.uploadError(file, { msg: errorMessage })
+        })
     },
     // 上传成功调用
     uploadSuccess(file, data) {
-      delete this.chunkMap[file.id];
+      delete this.chunkMap[file.id]
 
       this.uploadList.forEach((item, index) => {
         if (item.id === file.id) {
@@ -345,69 +349,69 @@ export default {
             ...data,
             filename: file.name,
             upload_status: 2,
-          };
-          this.$set(this.uploadList, index, extra);
-          this.$emit('success', file, extra);
+          }
+          this.$set(this.uploadList, index, extra)
+          this.$emit('success', file, extra)
         }
-      });
+      })
 
       if (this.allPendingFiles && this.allPendingFiles.length > 0) {
         // 下一文件 上传
-        let file = this.allPendingFiles.splice(0, 1)[0];
-        file && this.beforeUpload(file);
+        let file = this.allPendingFiles.splice(0, 1)[0]
+        file && this.beforeUpload(file)
       } else {
-        this.allPendingFiles = [];
+        this.allPendingFiles = []
       }
     },
     // 上传失败调用
     uploadError(file, error) {
       // 文件上传中
       this.uploadList.forEach((item) => {
-        item.id === file.id && (item.upload_status = 3);
-      });
-      this.$emit('error', error.msg || '上传失败');
+        item.id === file.id && (item.upload_status = 3)
+      })
+      this.$emit('error', error.msg || '上传失败')
     },
     // 终止分片上传过程 防止损耗性能 closemodal时必须终止全部上传过程
     removeFile(item, index) {
       if ([1].includes(item.upload_status)) {
-        uploadStop(this.env, item.uuid).then((res) => {
-          console.log('正在上传中--已终止', res);
-        });
+        uploadStop(this.sck_url, item.uuid).then((res) => {
+          console.log('正在上传中--已终止', res)
+        })
       }
 
       // 如果此时大视频正在校验中或者上传中 终止queueDom上传
       if ([0, 1].includes(item.upload_status)) {
-        this.$refs.queueDom[index] && this.$refs.queueDom[index].destroy();
+        this.$refs.queueDom[index] && this.$refs.queueDom[index].destroy()
       }
 
       setTimeout(() => {
-        this.uploadList.splice(index, 1);
-        this.$emit('remove', item, index);
-      }, 200);
+        this.uploadList.splice(index, 1)
+        this.$emit('remove', item, index)
+      }, 200)
     },
     // 根据文件扩展名得到文件类型  ext ==> type
     fileCategory(ext, fileType) {
-      if (fileType) return fileType;
+      if (fileType) return fileType
 
-      let type = '';
+      let type = ''
       Object.keys(FILE_TYPE_MAP).forEach((_type) => {
-        const extensions = FILE_TYPE_MAP[_type].format;
+        const extensions = FILE_TYPE_MAP[_type].format
         if (extensions.includes(ext)) {
-          type = _type;
+          type = _type
         }
-      });
+      })
 
-      return type;
+      return type
     },
     // 单位转换
     bytesToSize: calcBytesToSize,
     destroy() {
-      this.allPendingFiles = [];
-      this.uploadList = [];
-      this.chunkMap = {};
+      this.allPendingFiles = []
+      this.uploadList = []
+      this.chunkMap = {}
     },
   },
-};
+}
 </script>
 
 <style lang="less" scoped>

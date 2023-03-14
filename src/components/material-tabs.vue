@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-07-23 11:54:45
- * @LastEditTime: 2022-11-10 15:28:17
+ * @LastEditTime: 2023-03-14 15:11:42
  * @LastEditors: 易木
  * @Description: In User Settings Edit
  * @FilePath: \sucai-modal-next\src\components\material-tabs.vue
@@ -9,11 +9,7 @@
 <template>
   <div>
     <Tabs :value="materialVal" @on-click="handleClickTabs">
-      <TabPane
-        label="素材库"
-        name="materialVal1"
-        v-if="type != 'transcodeVideo'"
-      >
+      <TabPane label="素材库" name="materialVal1" v-if="type != 'transcodeVideo'">
         <sucai-list
           ref="sucaiList"
           :list="sucaiList"
@@ -26,12 +22,7 @@
         ></sucai-list>
         <Row>
           <i-col offset="5" class="cutPageDom" span="18">
-            <Page
-              :total="total"
-              show-elevator
-              @on-change="changePage"
-              :page-size="8"
-            />
+            <Page :total="total" show-elevator @on-change="changePage" :page-size="8" />
           </i-col>
         </Row>
       </TabPane>
@@ -39,11 +30,11 @@
         <js-uploader
           v-if="materialVal === 'materialVal2' && baseUrl != '' && modal"
           ref="vueUploader"
-          :env="env"
           :accept="materialType"
           :fileNumLimit="fileLimitNum"
           :highLimit="highLimit"
           :modalKey="modal"
+          :baseUrl="baseUrl"
           @error="uploadOnImgError"
           @success="uploadOnSuccess"
           @remove="uploadOnImgRemove"
@@ -60,11 +51,7 @@
             style="width: 600px; margin: 0 auto"
           />
           <div v-if="showPreview" style="text-align: center; padding-top: 20px">
-            <video
-              :src="choosedMaterials[0].url"
-              controls
-              class="setVideoShow"
-            ></video>
+            <video :src="choosedMaterials[0].url" controls class="setVideoShow"></video>
           </div>
         </div>
       </TabPane>
@@ -79,12 +66,7 @@
         <CoverList :list="pictures_tabs5" ref="ymCoverList"></CoverList>
         <Row>
           <i-col offset="5" class="cutPageDom" span="18">
-            <Page
-              :total="total5"
-              show-elevator
-              @on-change="changePage5"
-              :page-size="10"
-            />
+            <Page :total="total5" show-elevator @on-change="changePage5" :page-size="10" />
           </i-col>
         </Row>
       </TabPane>
@@ -93,11 +75,11 @@
 </template>
 
 <script>
-import { getFileList, saveFileToStore, checkIsTranscode } from "@/api/data";
-import SucaiList from "./sucaiList";
-import CoverList from "./coverList";
-import JsUploader from "_c/jsuploader";
-import Cookies from "js-cookie";
+import { getFileList, saveFileToStore, checkIsTranscode } from '@/api/data'
+import SucaiList from './sucaiList'
+import CoverList from './coverList'
+import JsUploader from '_c/jsuploader'
+import Cookies from 'js-cookie'
 import {
   Tabs,
   TabPane,
@@ -110,12 +92,12 @@ import {
   DropdownMenu,
   Icon,
   Message,
-} from "view-design";
+} from 'view-design'
 // import 'view-design/dist/styles/iview.css';
-import "@/index.less";
-import Bus from "../libs/bus";
+import '@/index.less'
+import Bus from '../libs/bus'
 export default {
-  name: "imageTabs",
+  name: 'imageTabs',
   props: {
     fileLimitNum: {
       type: Number,
@@ -139,11 +121,11 @@ export default {
     },
     websocketUrl: {
       type: String,
-      default: "wss://sucai.shandian.design/",
+      default: 'wss://sucai.shandian.design/',
     },
     highLimit: {
       type: String | Number,
-      default: "0",
+      default: '0',
     },
     showPictureOfArticle: {
       type: Boolean,
@@ -153,43 +135,43 @@ export default {
   watch: {
     type: {
       handler() {
-        this.materialType = this.type;
-        this.materialVal = "materialVal1";
-        if (this.type == "coverImg") {
-          this.materialType = "image";
-        } else if (this.type == "transcodeVideo") {
-          this.materialType = "video";
-          this.materialVal = "materialVal2";
+        this.materialType = this.type
+        this.materialVal = 'materialVal1'
+        if (this.type == 'coverImg') {
+          this.materialType = 'image'
+        } else if (this.type == 'transcodeVideo') {
+          this.materialType = 'video'
+          this.materialVal = 'materialVal2'
         }
-        this.choosedMaterials = [];
-        this.uploadVideoUrl = "";
-        this.showPreview = false;
+        this.choosedMaterials = []
+        this.uploadVideoUrl = ''
+        this.showPreview = false
       },
       immediate: true,
     },
     materialVal() {
-      this.page = 1;
-      this.choosedMaterials = [];
-      this.uploadVideoUrl = "";
-      this.showPreview = false;
+      this.page = 1
+      this.choosedMaterials = []
+      this.uploadVideoUrl = ''
+      this.showPreview = false
     },
     baseUrl() {
-      console.log(this.baseUrl);
+      console.log(this.baseUrl)
     },
     modalKey() {
-      this.modal = this.modalKey;
+      this.modal = this.modalKey
     },
     showPictureOfArticle() {
-      this.articleCover = this.showPictureOfArticle;
-      this.showPictureOfArticle && this.getPicturesOfArticle();
+      this.articleCover = this.showPictureOfArticle
+      this.showPictureOfArticle && this.getPicturesOfArticle()
     },
   },
   computed: {
     env() {
-      if (this.baseUrl.includes("https://shandianyun-sck.iqilu.com")) {
-        return "prod";
-      } else if (this.baseUrl.includes("https://sucai.shandian8.com")) {
-        return "test";
+      if (this.baseUrl.includes('https://shandianyun-sck.iqilu.com')) {
+        return 'prod'
+      } else if (this.baseUrl.includes('https://sucai.shandian8.com')) {
+        return 'test'
       }
     },
   },
@@ -211,7 +193,7 @@ export default {
   },
   data() {
     return {
-      materialVal: "materialVal1",
+      materialVal: 'materialVal1',
       num: 8,
       page: 1,
       total: 0,
@@ -219,10 +201,10 @@ export default {
       path_id: 0,
       choosedMaterials: [],
       modal: this.modalKey,
-      uploadVideoUrl: "",
+      uploadVideoUrl: '',
       showPreview: false,
-      materialType: "",
-      uploadUrl: "upload/chunk-resume/process",
+      materialType: '',
+      uploadUrl: 'upload/chunk-resume/process',
       ws: null, //webSocket所用
       wsInterval: undefined,
       cutTUrls: [],
@@ -232,125 +214,118 @@ export default {
       pictures_tabs5: [], //文章内图片展示数量
       total5: 1,
       articleCover: this.showPictureOfArticle,
-    };
+    }
   },
   mounted() {
-    Bus.$on("openModal", (args) => {
-      this.sucaiList = [];
-      this.path_id = 0;
-      this.materialType = args.type;
-      this.materialVal = "materialVal1";
-      this.getFileList(args.highLimit);
-      this.choosedMaterials = [];
-    });
-    Bus.$on("closeModal", () => {
-      this.choosedMaterials = [];
-      this.cutTUrls = [];
-      clearInterval(this.wsInterval);
-      clearInterval(this.wsInterval_transcode);
-      this.$refs.vueUploader && this.$refs.vueUploader.destroy();
+    Bus.$on('openModal', (args) => {
+      this.sucaiList = []
+      this.path_id = 0
+      this.materialType = args.type
+      this.materialVal = 'materialVal1'
+      this.getFileList(args.highLimit)
+      this.choosedMaterials = []
+    })
+    Bus.$on('closeModal', () => {
+      this.choosedMaterials = []
+      this.cutTUrls = []
+      clearInterval(this.wsInterval)
+      clearInterval(this.wsInterval_transcode)
+      this.$refs.vueUploader && this.$refs.vueUploader.destroy()
       if (this.ws) {
-        this.ws.close();
+        this.ws.close()
       }
-    });
+    })
 
     // console.log('this.$refs.sucaiList', this.$refs.sucaiList);
   },
   methods: {
     getFileList(highLimit) {
-      getFileList(
-        this.baseUrl,
-        this.materialType,
-        this.path_id,
-        this.num,
-        this.page,
-        highLimit
-      )
+      getFileList(this.baseUrl, this.materialType, this.path_id, this.num, this.page, highLimit)
         .then((res) => {
           res.data.data.rows.forEach((sucai) => {
-            sucai.choosed = false;
-          });
-          this.sucaiList = res.data.data.rows;
-          this.total = Number(res.data.data.total);
+            sucai.choosed = false
+          })
+          this.sucaiList = res.data.data.rows
+          this.total = Number(res.data.data.total)
         })
         .catch((err) => {
-          console.log(err);
-        });
+          console.log(err)
+        })
     },
 
     //打开窗口方法
     watchOpenModal(type, highLimit) {
-      this.sucaiList = [];
-      this.path_id = 0;
-      if (this.type == "transcodeVideo") {
-        this.materialType = "video";
-        this.materialVal = "materialVal2";
+      this.sucaiList = []
+      this.path_id = 0
+      if (this.type == 'transcodeVideo') {
+        this.materialType = 'video'
+        this.materialVal = 'materialVal2'
       } else {
-        this.materialType = type;
-        this.materialVal = "materialVal1";
-        this.getFileList(highLimit);
+        this.materialType = type
+        this.materialVal = 'materialVal1'
+        this.getFileList(highLimit)
       }
-      this.choosedMaterials = [];
-      this.$refs.sucaiList && this.$refs.sucaiList.clearChoosed();
-      this.showPictureOfArticle && this.getPicturesOfArticle();
+      this.choosedMaterials = []
+      this.$refs.sucaiList && this.$refs.sucaiList.clearChoosed()
+      this.showPictureOfArticle && this.getPicturesOfArticle()
     },
     watchCloseModal() {
-      this.choosedMaterials = [];
-      this.cutTUrls = [];
-      clearInterval(this.wsInterval);
-      clearInterval(this.wsInterval_transcode);
-      this.$refs.vueUploader && this.$refs.vueUploader.destroy();
-      this.$refs.ymCoverList && this.$refs.ymCoverList.clearChoosedList();
+      this.choosedMaterials = []
+      this.cutTUrls = []
+      clearInterval(this.wsInterval)
+      clearInterval(this.wsInterval_transcode)
+      this.$refs.vueUploader && this.$refs.vueUploader.destroy()
+      this.$refs.ymCoverList && this.$refs.ymCoverList.clearChoosedList()
       if (this.ws) {
-        this.ws.close();
+        this.ws.close()
       }
     },
     changePage(currentPage) {
-      this.page = currentPage;
-      this.choosedMaterials = [];
-      this.$refs.sucaiList && this.$refs.sucaiList.clearChoosed();
-      this.getFileList(this.highLimit);
+      this.page = currentPage
+      this.choosedMaterials = []
+      this.$refs.sucaiList && this.$refs.sucaiList.clearChoosed()
+      this.getFileList(this.highLimit)
     },
     handleClickTabs(name) {
-      this.materialVal = name;
+      this.materialVal = name
     },
     chooseFolder(path_id) {
-      this.path_id = path_id;
-      this.page = 1;
-      this.getFileList(this.highLimit);
+      this.path_id = path_id
+      this.page = 1
+      this.getFileList(this.highLimit)
     },
     // 文件上传
     uploadOnImgError(errorMessage) {
       Message.error({
         content: errorMessage,
         duration: 7,
-      });
+      })
     },
     uploadOnSuccess(file, extra) {
       if (extra) {
         if (!extra.url) {
-          Message.error("上传失败！");
-          return;
+          Message.error('上传失败！')
+          return
         }
 
-        extra.filename = file.name;
-        if (this.materialType !== "video") {
-          this.choosedMaterials.push(extra);
-          Bus.$emit("doMaterials", this.choosedMaterials);
+        extra.filename = file.name
+        if (this.materialType !== 'video') {
+          this.choosedMaterials.push(extra)
+          Bus.$emit('doMaterials', this.choosedMaterials)
         }
-        this.$emit("beforeSaveToStore");
-        this.saveFileToStore(extra);
+        this.$emit('beforeSaveToStore')
+        this.saveFileToStore(extra)
       }
     },
     saveFileToStore(info) {
       // console.log('入库', info, this.from);
-      if (this.from === "notSave") {
-        this.$emit("afterSaveToStore");
-        if (this.materialType === "video") {
-          this.choosedMaterials.push(info);
-          Bus.$emit("doMaterials", this.choosedMaterials);
+      if (this.from === 'notSave') {
+        this.$emit('afterSaveToStore')
+        if (this.materialType === 'video') {
+          this.choosedMaterials.push(info)
+          Bus.$emit('doMaterials', this.choosedMaterials)
         }
-        return false;
+        return false
       }
       saveFileToStore(
         this.baseUrl,
@@ -362,96 +337,96 @@ export default {
       )
         .then((res) => {
           if (res.status === 200) {
-            info.id = res.data.data.id;
-            if (this.materialType === "video") {
-              this.choosedMaterials.push(info);
-              Bus.$emit("doMaterials", this.choosedMaterials);
+            info.id = res.data.data.id
+            if (this.materialType === 'video') {
+              this.choosedMaterials.push(info)
+              Bus.$emit('doMaterials', this.choosedMaterials)
               // this.initWebSocket("file_id", res.data.data.id);
-              this.checkIsTranscode(res.data.data.id);
+              this.checkIsTranscode(res.data.data.id)
             }
-            this.$emit("afterSaveToStore");
+            this.$emit('afterSaveToStore')
           } else {
-            Message.error(res.data.msg);
+            Message.error(res.data.msg)
           }
         })
         .catch((err) => {
-          console.log(err);
-        });
+          console.log(err)
+        })
     },
     //采用socket通信来获取封面抽帧
     initWebSocket(ident_type, ident) {
-      let _this = this;
-      let websocketPath = _this.websocketUrl + "socket.io ";
-      _this.ws = new WebSocket(websocketPath);
-      let ws = _this.ws;
-      if ("WebSocket" in window) {
+      let _this = this
+      let websocketPath = _this.websocketUrl + 'socket.io '
+      _this.ws = new WebSocket(websocketPath)
+      let ws = _this.ws
+      if ('WebSocket' in window) {
         ws.onopen = function() {
           //当WebSocket创建成功时，触发onopen事件
           let item = {
-            type: "receive",
-            version: "2.00",
+            type: 'receive',
+            version: '2.00',
             request: {
               ident_type: ident_type,
               ident: ident,
             },
-          };
-          ws.send(JSON.stringify(item)); //将消息发送到服务端
-          _this.cutTUrls = [];
+          }
+          ws.send(JSON.stringify(item)) //将消息发送到服务端
+          _this.cutTUrls = []
           _this.wsInterval = setInterval(() => {
-            _this.intervalSend();
-          }, 45000);
-        };
+            _this.intervalSend()
+          }, 45000)
+        }
         ws.onmessage = function(e) {
           //当客户端收到服务端发来的消息时，触发onmessage事件，参数e.data包含server传递过来的数据
-          let data = JSON.parse(e.data);
+          let data = JSON.parse(e.data)
           switch (data.type) {
-            case "init":
-              break;
-            case "reply":
-              console.log(data.data);
-              break;
-            case "push":
-              _this.cutTUrls = data.data.urls.concat(_this.cutTUrls);
-              break;
+            case 'init':
+              break
+            case 'reply':
+              console.log(data.data)
+              break
+            case 'push':
+              _this.cutTUrls = data.data.urls.concat(_this.cutTUrls)
+              break
           }
-        };
+        }
         ws.onclose = function(e) {
           //当客户端收到服务端发送的关闭连接请求时，触发onclose事件
-          console.log(e);
-          console.log("close");
-        };
+          console.log(e)
+          console.log('close')
+        }
         ws.onerror = function(e) {
           //如果出现连接、处理、接收、发送数据失败的时候触发onerror事件
-          console.log(e);
-        };
+          console.log(e)
+        }
       } else {
-        console.log("您的浏览器不支持WebSocket");
+        console.log('您的浏览器不支持WebSocket')
       }
     },
     intervalSend() {
       let item = {
-        type: "ping",
-      };
-      this.ws.send(JSON.stringify(item));
+        type: 'ping',
+      }
+      this.ws.send(JSON.stringify(item))
     },
     checkIsTranscode(id) {
       checkIsTranscode(this.baseUrl)
         .then((res) => {
-          let mSwitch = res.data.data.switch;
+          let mSwitch = res.data.data.switch
           if (mSwitch) {
-            this.$emit("start_transcode", id);
+            this.$emit('start_transcode', id)
           }
         })
         .catch((err) => {
-          console.log(err);
-        });
+          console.log(err)
+        })
     },
     uploadOnImgRemove(file, index) {
-      this.choosedMaterials.splice(index, 1);
-      Bus.$emit("doMaterials", this.choosedMaterials);
-      this.ws && this.ws.close();
-      clearInterval(this.wsInterval);
-      this.cutTUrls = [];
+      this.choosedMaterials.splice(index, 1)
+      Bus.$emit('doMaterials', this.choosedMaterials)
+      this.ws && this.ws.close()
+      clearInterval(this.wsInterval)
+      this.cutTUrls = []
     },
     uploadImgError(file, errorMessage) {
       // Message.error({
@@ -462,68 +437,66 @@ export default {
     // 视频插入预览
     previewVideo() {
       // let isHttps = /^https:\/\/.*/i.test(this.uploadVideoUrl);
-      let isHttps = this.uploadVideoUrl.substr(0, 5) == "https";
-      let searchKey = this.uploadVideoUrl.indexOf("iqilu.com");
+      let isHttps = this.uploadVideoUrl.substr(0, 5) == 'https'
+      let searchKey = this.uploadVideoUrl.indexOf('iqilu.com')
       if (isHttps && searchKey > -1) {
         let item = {
           url: this.uploadVideoUrl,
-        };
-        this.choosedMaterials[0] = item;
-        this.showPreview = true;
-        this.initWebSocket("url", this.uploadVideoUrl);
-        Bus.$emit("doMaterials", this.choosedMaterials);
+        }
+        this.choosedMaterials[0] = item
+        this.showPreview = true
+        this.initWebSocket('url', this.uploadVideoUrl)
+        Bus.$emit('doMaterials', this.choosedMaterials)
       } else {
-        Message.error("出于系统安全性考虑，请填写本网站下https协议视频");
+        Message.error('出于系统安全性考虑，请填写本网站下https协议视频')
       }
     },
     //素材库选中 获取抽帧
     cutTimePic(list) {
-      this.cutTUrls = this.cutTUrls.concat(list);
+      this.cutTUrls = this.cutTUrls.concat(list)
     },
     //获取文章内图片总数
     getPicturesOfArticle() {
-      let imgs = Cookies.get("picturesOftheArticle")
-        ? JSON.parse(Cookies.get("picturesOftheArticle"))
-        : [];
-      let imgs2 = Cookies.get("picturesOftheArticle2")
-        ? JSON.parse(Cookies.get("picturesOftheArticle2"))
-        : [];
-      let imgs3 = Cookies.get("picturesOftheArticle3")
-        ? JSON.parse(Cookies.get("picturesOftheArticle2"))
-        : [];
-      imgs = imgs.concat(imgs2);
-      imgs = imgs.concat(imgs3);
+      let imgs = Cookies.get('picturesOftheArticle')
+        ? JSON.parse(Cookies.get('picturesOftheArticle'))
+        : []
+      let imgs2 = Cookies.get('picturesOftheArticle2')
+        ? JSON.parse(Cookies.get('picturesOftheArticle2'))
+        : []
+      let imgs3 = Cookies.get('picturesOftheArticle3')
+        ? JSON.parse(Cookies.get('picturesOftheArticle2'))
+        : []
+      imgs = imgs.concat(imgs2)
+      imgs = imgs.concat(imgs3)
       let imgData = imgs.map((img, imgIndex) => {
         let imgItem = {
           name: `文章内图片${imgIndex + 1}`,
           url: img,
-        };
-        return imgItem;
-      });
-      this.picturesOfTheArticle = this.cutPages(imgData);
-      this.total5 = imgData.length;
-      this.pictures_tabs5 = this.picturesOfTheArticle[0]
-        ? this.picturesOfTheArticle[0]
-        : [];
+        }
+        return imgItem
+      })
+      this.picturesOfTheArticle = this.cutPages(imgData)
+      this.total5 = imgData.length
+      this.pictures_tabs5 = this.picturesOfTheArticle[0] ? this.picturesOfTheArticle[0] : []
     },
     //文章内图片页码改变
     changePage5(currentPage) {
-      this.pictures_tabs5 = this.picturesOfTheArticle[currentPage - 1];
+      this.pictures_tabs5 = this.picturesOfTheArticle[currentPage - 1]
     },
     //图片分页
     cutPages(data) {
-      const pages = [];
+      const pages = []
       data.forEach((res, index) => {
-        const page = Math.floor(index / 10);
+        const page = Math.floor(index / 10)
         if (!pages[page]) {
-          pages[page] = [];
+          pages[page] = []
         }
-        pages[page].push(res);
-      });
-      return pages;
+        pages[page].push(res)
+      })
+      return pages
     },
   },
-};
+}
 </script>
 
 <style lang="less" scoped>

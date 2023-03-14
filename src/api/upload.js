@@ -1,16 +1,16 @@
 /*
  * @Author: your name
  * @Date: 2020-10-15 16:21:50
- * @LastEditTime: 2022-03-01 09:54:24
- * @LastEditors: 赵婷婷
+ * @LastEditTime: 2023-03-14 15:18:42
+ * @LastEditors: 易木
  * @Description: In User Settings Edit
  * @FilePath: \sucaiku_front_pc\src\api
  */
-import axios from '@/libs/api.request';
-import { getUploadHeaders } from '@/libs/util';
+import axios from '@/libs/api.request'
+import { getUploadHeaders } from '@/libs/util'
 
-let TEST_BASE_URL = 'https://sucai.shandian8.com/';
-let PROD_BASE_URL = 'https://shandianyun-sck.iqilu.com/';
+let TEST_BASE_URL = 'https://sucai.shandian8.com/'
+let PROD_BASE_URL = 'https://shandianyun-sck.iqilu.com/'
 
 // let BASE_URL = 'https://shandianyun-sck.iqilu.com/';
 // if (process.env.NODE_ENV === 'development') {
@@ -25,13 +25,13 @@ let PROD_BASE_URL = 'https://shandianyun-sck.iqilu.com/';
  * @return {type}
  */
 export const uploadInit = (env, args) => {
-  let base_url = env === 'test' ? TEST_BASE_URL : PROD_BASE_URL;
+  let base_url = env
   return axios.request({
     url: base_url + 'upload/chunk-resume/init',
     method: 'post',
     data: args,
-  });
-};
+  })
+}
 
 /**
  * @description: 分片上传 顺序 需等待上片返回后下一片请求
@@ -39,15 +39,15 @@ export const uploadInit = (env, args) => {
  * @return {type}
  */
 export const uploadProcess = (env, args) => {
-  let base_url = env === 'test' ? TEST_BASE_URL : PROD_BASE_URL;
+  let base_url = env
   return axios.request({
     url: base_url + 'upload/chunk-resume/process',
     method: 'post',
     headers: { ...getUploadHeaders(), 'content-type': 'multipart/form-data' },
     // data: new URLSearchParams(args),
     data: args,
-  });
-};
+  })
+}
 
 /**
  * @description: 终止
@@ -55,13 +55,13 @@ export const uploadProcess = (env, args) => {
  * @return {type}
  */
 export const uploadStop = (env, uuid) => {
-  let base_url = env === 'test' ? TEST_BASE_URL : PROD_BASE_URL;
+  let base_url = env
   return axios.request({
     url: base_url + 'upload/chunk-resume/abort',
     method: 'post',
     data: { uuid },
-  });
-};
+  })
+}
 
 /**
  * @description: 完成 开始合并
@@ -69,10 +69,10 @@ export const uploadStop = (env, uuid) => {
  * @return {type}
  */
 export const uploadFinish = (env, args) => {
-  let base_url = env === 'test' ? TEST_BASE_URL : PROD_BASE_URL;
+  let base_url = env
   return axios.request({
     url: base_url + 'upload/chunk-resume/finish',
     method: 'post',
     data: args,
-  });
-};
+  })
+}
