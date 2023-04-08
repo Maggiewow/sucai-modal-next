@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-07-23 11:54:45
- * @LastEditTime: 2023-03-14 15:11:42
+ * @LastEditTime: 2023-04-08 20:45:34
  * @LastEditors: 易木
  * @Description: In User Settings Edit
  * @FilePath: \sucai-modal-next\src\components\material-tabs.vue
@@ -438,8 +438,9 @@ export default {
     previewVideo() {
       // let isHttps = /^https:\/\/.*/i.test(this.uploadVideoUrl);
       let isHttps = this.uploadVideoUrl.substr(0, 5) == 'https'
-      let searchKey = this.uploadVideoUrl.indexOf('iqilu.com')
-      if (isHttps && searchKey > -1) {
+      let searchIqiluKey = this.uploadVideoUrl.indexOf('iqilu.com')
+      let searchLitenewsKey = this.uploadVideoUrl.indexOf('litenews.cn')
+      if (isHttps && (searchIqiluKey > -1 || searchLitenewsKey > -1)) {
         let item = {
           url: this.uploadVideoUrl,
         }
