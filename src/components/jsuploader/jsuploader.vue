@@ -2,7 +2,7 @@
  * 修改 适应原本的sucai-modal v53 => v56 增加控制并发
  * @Author: your name
  * @Date: 2020-07-23 09:48:43
- * @LastEditTime: 2023-05-22 16:54:52
+ * @LastEditTime: 2023-05-22 16:58:16
  * @LastEditors: 易木
  * @Description: In User Settings Edit
  * @FilePath: \sucai-modal\src\views\Home.vue
@@ -43,16 +43,18 @@
           <div class="file-info-line">
             <div class="title-col">
               <div class="file-type top-level" :icon="fileCategory(item.ext, item.file_type)"></div>
-              <Poptip trigger="hover" placement="bottom" style="height: 57px">
+              <Poptip
+                trigger="hover"
+                placement="bottom"
+                style="height: 57px"
+                v-if="item.file_type == 'image' && item.url"
+              >
                 <p class="name-text top-level" :title="item.filename">{{ item.filename }}</p>
-                <div
-                  class="image-preview-dom"
-                  slot="content"
-                  v-if="item.file_type == 'image' && item.url"
-                >
+                <div class="image-preview-dom" slot="content">
                   <img :src="item.url" class="image-preview-self" />
                 </div>
               </Poptip>
+              <p v-else class="name-text top-level" :title="item.filename">{{ item.filename }}</p>
             </div>
             <p class="size-text top-level">{{ bytesToSize(item.size) }}</p>
             <p class="status-text top-level">
