@@ -1,8 +1,8 @@
 <!--
  * @Author: your name
  * @Date: 2020-08-18 14:33:28
- * @LastEditTime: 2022-02-16 17:01:28
- * @LastEditors: 赵婷婷
+ * @LastEditTime: 2023-05-23 14:16:16
+ * @LastEditors: 易木
  * @Description: In User Settings Edit
  * @FilePath: \sucai-modal-next\src\components\coverList.vue
 -->
@@ -18,8 +18,8 @@
         <div class="materialItemInfo">
           <div class="materialItemTitle">{{ item.name }}</div>
           <div class="materialItemMore">
-            <span>{{ item.width }}*{{ item.height }}</span>
-            <span>{{ getSize(item.size) }}</span>
+            <span v-if="item.width">{{ item.width }}*{{ item.height }}</span>
+            <span v-if="item.size">{{ getSize(item.size) }}</span>
           </div>
         </div>
       </div>
@@ -31,18 +31,22 @@
 </template>
 
 <script>
-import { renderSize } from '@/libs/util.js';
-import config from '@/config';
-import Bus from '../libs/bus';
-import { Message, Modal } from 'view-design';
+import { renderSize } from '@/libs/util.js'
+import config from '@/config'
+import Bus from '../libs/bus'
+import { Message, Modal } from 'view-design'
 // import 'view-design/dist/styles/iview.css';
-import '@/index.less';
+import '@/index.less'
 export default {
   name: 'CoverList',
   props: {
     list: {
       type: Array,
       default: [],
+    },
+    fileNumLimit: {
+      type: Number,
+      default: 1,
     },
   },
   components: {
@@ -51,13 +55,13 @@ export default {
   },
   watch: {
     list() {
-      this.coverList = this.list;
+      this.coverList = this.list
     },
   },
   mounted() {
     Bus.$on('closeModal', () => {
-      this.choosedCover = [];
-    });
+      this.choosedCover = []
+    })
   },
   data() {
     return {
@@ -65,47 +69,46 @@ export default {
       choosedCover: [],
       preview_value: false,
       preview_cover: '',
-    };
+    }
   },
   computed: {
     chooseNum() {
-      return this.choosedCover.length;
+      return this.choosedCover.length
     },
   },
   methods: {
     getSize: (item) => renderSize(item),
     getThumb(item) {
-      return 'backgroundImage:url(' + item.url + ')';
+      return 'backgroundImage:url(' + item.url + ')'
     },
     chooseItemCheck(index) {
-      let item = this.coverList[index];
-      let _this = this;
-      let choosed = _this.coverList[index].choosed ? true : false;
+      let item = this.coverList[index]
+      let _this = this
+      let choosed = _this.coverList[index].choosed ? true : false
       if (!choosed) {
-        if (_this.chooseNum >= 1) {
-          Message.error('已选封面已超过1张！');
+        if (_this.chooseNum >= this.fileNumLimit) {
+          Message.error('已选封面过多！')
         } else {
-          _this.$set(_this.coverList[index], 'choosed', true);
-          _this.choosedCover.push(item);
-          Bus.$emit('doMaterials', _this.choosedCover);
+          _this.$set(_this.coverList[index], 'choosed', true)
+          _this.choosedCover.push(item)
+          Bus.$emit('doMaterials', _this.choosedCover)
         }
       } else {
-        _this.$set(_this.coverList[index], 'choosed', false);
-        _this.choosedCover = [];
-        Bus.$emit('doMaterials', _this.choosedCover);
+        _this.$set(_this.coverList[index], 'choosed', false)
+        _this.choosedCover.splice(index, 1)
+        Bus.$emit('doMaterials', _this.choosedCover)
       }
     },
     previewImg(item) {
-      console.log(item);
-      this.preview_cover = item.url;
-      this.preview_value = true;
+      this.preview_cover = item.url
+      this.preview_value = true
     },
     //清除选中态
     clearChoosedList() {
-      this.choosedCover = [];
+      this.choosedCover = []
     },
   },
-};
+}
 </script>
 
 <style lang="less" scoped>

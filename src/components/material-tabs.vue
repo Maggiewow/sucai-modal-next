@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-07-23 11:54:45
- * @LastEditTime: 2023-04-08 20:45:34
+ * @LastEditTime: 2023-05-23 12:01:07
  * @LastEditors: 易木
  * @Description: In User Settings Edit
  * @FilePath: \sucai-modal-next\src\components\material-tabs.vue
@@ -63,7 +63,11 @@
         name="materialVal5"
         v-if="showPictureOfArticle && type == 'image'"
       >
-        <CoverList :list="pictures_tabs5" ref="ymCoverList"></CoverList>
+        <CoverList
+          :list="pictures_tabs5"
+          :fileNumLimit="fileLimitNum"
+          ref="ymCoverList"
+        ></CoverList>
         <Row>
           <i-col offset="5" class="cutPageDom" span="18">
             <Page :total="total5" show-elevator @on-change="changePage5" :page-size="10" />
