@@ -1,8 +1,8 @@
 <!--
  * @Author: your name
  * @Date: 2020-07-23 14:51:28
- * @LastEditTime: 2023-01-17 16:11:35
- * @LastEditors: 赵婷婷
+ * @LastEditTime: 2023-08-22 17:07:02
+ * @LastEditors: 易木
  * @Description: In User Settings Edit
  * @FilePath: \sucai-modal-next\src\components\sucaiList.vue
 -->
@@ -19,45 +19,20 @@
       </i-col>
       <i-col span="18">
         <div class="chooseTips">已选{{ chooseNum }} 张</div>
-        <Row
-          :gutter="20"
-          style="height: 400px"
-        >
-          <i-col
-            span="6"
-            v-for="(item, index) of materialList"
-            :key="index"
-            class="materialItem"
-          >
-            <div
-              class="materialItemBox"
-              @click="chooseItemCheck(index)"
-            >
-              <i
-                class="materialItemThumb"
-                :style="getThumb(item)"
-              ></i>
-              <img
-                src="../assets/choosed.png"
-                class="choosed_logo"
-                v-if="item.choosed"
-              />
-              <img
-                src="../assets/noChoosed.png"
-                class="choosed_logo"
-                v-else
-              />
+        <Row :gutter="20" style="height: 400px">
+          <i-col span="6" v-for="(item, index) of materialList" :key="index" class="materialItem">
+            <div class="materialItemBox" @click="chooseItemCheck(index)">
+              <i class="materialItemThumb" :style="getThumb(item)"></i>
+              <img src="../assets/choosed.png" class="choosed_logo" v-if="item.choosed" />
+              <img src="../assets/noChoosed.png" class="choosed_logo" v-else />
             </div>
             <div class="materialItemInfo">
-              <div
-                class="materialItemTitle"
-                :title="item.name"
-              >
+              <div class="materialItemTitle" :title="item.name">
                 {{ item.name }}
               </div>
               <div class="materialItemMore">
                 <span>{{ item.width }}*{{ item.height }}</span>
-                <span>{{ getSize(item.size) }}</span>
+                <span>{{ getSize(item.size) || '未知大小' }}</span>
               </div>
             </div>
           </i-col>
@@ -69,17 +44,9 @@
 
 <script>
 import Vue from 'vue'
-import { getFolders } from '@/api/data'
+import { getFolders, getCooperateFolders } from '@/api/data'
 import { renderSize } from '@/libs/util.js'
-import {
-  Row,
-  Col,
-  Tree,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  Message,
-} from 'view-design'
+import { Row, Col, Tree, Dropdown, DropdownItem, DropdownMenu, Message } from 'view-design'
 Vue.component('Dropdown', Dropdown)
 Vue.component('DropdownMenu', DropdownMenu)
 import config from '@/config'
@@ -128,6 +95,7 @@ export default {
         if (type) {
           this.materialType = this.type
           this.getFolders()
+          this.getCooperateFoldersFun()
         }
       },
       immediate: true,
@@ -198,9 +166,7 @@ export default {
         }
       } else {
         _this.$set(this.materialList[index], 'choosed', false)
-        let order = _this.choosedMaterials.findIndex(
-          (choosedItem) => choosedItem.id == item.id
-        )
+        let order = _this.choosedMaterials.findIndex((choosedItem) => choosedItem.id == item.id)
         if (order || order === 0) {
           _this.choosedMaterials.splice(order, 1)
           Bus.$emit('doMaterials', _this.choosedMaterials)
@@ -213,42 +179,87 @@ export default {
       this.choosedMaterials = []
     },
     getFolders(item, callback) {
+      let path_id = 0
+      let getFolderMethod = getFolders
       if (item) {
-        getFolders(this.baseUrl, this.materialType, item.id)
-          .then((res) => {
-            let foldersMenu = res.data.data.map((folder) => {
-              let folderItem = {
-                title: folder.file_name,
-                loading: false,
-                children: [],
-                id: folder.id,
-              }
-              return folderItem
-            })
+        path_id = item.id
+        if (item.cloud_type == 'local_coop') {
+          getFolderMethod = getCooperateFolders
+        }
+      }
+      getFolderMethod(this.baseUrl, this.materialType, path_id)
+        .then((res) => {
+          let foldersMenu = res.data.data.map((folder) => {
+            let folderItem = {
+              title: folder.file_name,
+              loading: false,
+              children: [],
+              id: folder.id,
+              cloud_type: folder.cloud_type || '',
+            }
+            return folderItem
+          })
+          if (item) {
             callback(foldersMenu)
-          })
-          .catch((err) => {
-            console.log(err)
-          })
-      } else {
-        getFolders(this.baseUrl, this.materialType, 0)
-          .then((res) => {
-            let foldersMenu = res.data.data.map((folder) => {
-              let folderItem = {
-                title: folder.file_name,
-                loading: false,
-                children: [],
-                id: folder.id,
-              }
-              return folderItem
-            })
+          } else {
             this.foldersMenu[0].children = foldersMenu
             this.foldersMenu[0].expand = true
-          })
-          .catch((err) => {
-            console.log(err)
-          })
-      }
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+      // if (item) {
+
+      // } else {
+      //   getFolders(this.baseUrl, this.materialType, 0)
+      //     .then((res) => {
+      //       let foldersMenu = res.data.data.map((folder) => {
+      //         let folderItem = {
+      //           title: folder.file_name,
+      //           loading: false,
+      //           children: [],
+      //           id: folder.id,
+      //         }
+      //         return folderItem
+      //       })
+
+      //     })
+      //     .catch((err) => {
+      //       console.log(err)
+      //     })
+      // }
+    },
+    getCooperateFoldersFun(item, callback) {
+      let path_id = item ? item.id : 0
+      getCooperateFolders(this.baseUrl, this.materialType, path_id).then((res) => {
+        let foldersMenu = res.data.data.map((folder) => {
+          let folderItem = {
+            title: folder.file_name,
+            loading: false,
+            children: [],
+            id: folder.id,
+            cloud_type: folder.cloud_type || '',
+          }
+          return folderItem
+        })
+        console.log(foldersMenu, '共建素材库')
+
+        //如果有共建素材库那就展示
+        if (foldersMenu && foldersMenu.length) {
+          let coopFolders = {
+            id: 'coop-0',
+            folderId: 0,
+            title: '共建素材',
+            loading: false,
+            children: foldersMenu,
+            selected: false,
+            expand: false,
+            cloud_type: 'local_coop',
+          }
+          this.foldersMenu.push(coopFolders)
+        }
+      })
     },
     getThumb(item) {
       if (this.materialType === 'image') {
@@ -260,8 +271,9 @@ export default {
       }
     },
     getSize: (item) => renderSize(item),
+    //选中文件夹
     chooseFolder(array, attr) {
-      this.$emit('chooseFolder', attr.id)
+      this.$emit('chooseFolder', attr.id, attr.cloud_type)
     },
     initWebSocket(ident_type, ident) {
       let _this = this
@@ -269,7 +281,7 @@ export default {
       _this.ws = new WebSocket(websocketPath)
       let ws = _this.ws
       if ('WebSocket' in window) {
-        ws.onopen = function () {
+        ws.onopen = function() {
           //当WebSocket创建成功时，触发onopen事件
           let item = {
             type: 'receive',
@@ -284,7 +296,7 @@ export default {
             _this.intervalSend()
           }, 45000)
         }
-        ws.onmessage = function (e) {
+        ws.onmessage = function(e) {
           //当客户端收到服务端发来的消息时，触发onmessage事件，参数e.data包含server传递过来的数据
           let data = JSON.parse(e.data)
           switch (data.type) {
@@ -299,12 +311,12 @@ export default {
               break
           }
         }
-        ws.onclose = function (e) {
+        ws.onclose = function(e) {
           //当客户端收到服务端发送的关闭连接请求时，触发onclose事件
           console.log(e)
           console.log('close')
         }
-        ws.onerror = function (e) {
+        ws.onerror = function(e) {
           //如果出现连接、处理、接收、发送数据失败的时候触发onerror事件
           console.log(e)
         }

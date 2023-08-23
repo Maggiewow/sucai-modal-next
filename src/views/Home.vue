@@ -57,8 +57,8 @@
 
 <script>
 // @ is an alias to /src
-import SucaiModalNext from '@/components/sucai-modal.vue';
-import { Checkbox } from 'view-design';
+import SucaiModalNext from '@/components/sucai-modal.vue'
+import { Checkbox } from 'view-design'
 export default {
   name: 'Home',
   components: {
@@ -78,51 +78,51 @@ export default {
       videoUrl: '',
       coverUrl: '',
       materialFrom: 'article',
-    };
+    }
   },
   computed: {
     highLimit() {
-      return this.videoHighLimit ? '1' : '0';
+      return this.videoHighLimit ? '1' : '0'
     },
   },
   mounted() {
     if (process.env.NODE_ENV === 'development') {
-      // this.material_baseUrl = 'https://sucai.shandian8.com/';
-      this.material_baseUrl = 'https://shandianyun-sck.iqilu.com/';
+      this.material_baseUrl = 'https://sucai.shandian8.com/'
+      // this.material_baseUrl = 'https://shandianyun-sck.iqilu.com/';
     } else {
-      this.material_baseUrl = 'https://shandianyun-sck.iqilu.com/';
+      this.material_baseUrl = 'https://shandianyun-sck.iqilu.com/'
     }
   },
   methods: {
     openModal(type) {
       if (type == 'image') {
-        this.fileLimitNum = 10;
-        this.showPictureOfArticle = true;
+        this.fileLimitNum = 10
+        this.showPictureOfArticle = true
       } else if (type == 'transcodeVideo') {
-        this.materialFrom = 'notSave';
+        this.materialFrom = 'notSave'
       }
-      this.type = type;
-      this.modalKey = true;
+      this.type = type
+      this.modalKey = true
     },
     handleModalOk(list) {
-      this.choosedMaterials = list;
-      this.modalKey = false;
+      this.choosedMaterials = list
+      this.modalKey = false
     },
     handleModalCancle() {
-      this.modalKey = false;
+      this.modalKey = false
     },
     chooseVideoOk(list) {
-      console.log('chooseVideo', list);
-      this.videoUrl = list[0].url;
+      console.log('chooseVideo', list)
+      this.videoUrl = list[0].url
       // this.modalKey = false;
     },
     chooseCoverOk(list) {
-      console.log('chooseCover', list);
-      this.coverUrl = list[0].url;
-      this.modalKey = false;
+      console.log('chooseCover', list)
+      this.coverUrl = list[0].url
+      this.modalKey = false
     },
   },
-};
+}
 </script>
 
 <style scoped>

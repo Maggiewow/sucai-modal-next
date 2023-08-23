@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-07-23 11:54:45
- * @LastEditTime: 2023-05-23 12:01:07
+ * @LastEditTime: 2023-08-22 17:15:55
  * @LastEditors: 易木
  * @Description: In User Settings Edit
  * @FilePath: \sucai-modal-next\src\components\material-tabs.vue
@@ -79,7 +79,7 @@
 </template>
 
 <script>
-import { getFileList, saveFileToStore, checkIsTranscode } from '@/api/data'
+import { getFileList, saveFileToStore, checkIsTranscode, getCoopFileList } from '@/api/data'
 import SucaiList from './sucaiList'
 import CoverList from './coverList'
 import JsUploader from '_c/jsuploader'
@@ -218,6 +218,7 @@ export default {
       pictures_tabs5: [], //文章内图片展示数量
       total5: 1,
       articleCover: this.showPictureOfArticle,
+      cloud_type: undefined, //素材类型
     }
   },
   mounted() {
@@ -244,7 +245,11 @@ export default {
   },
   methods: {
     getFileList(highLimit) {
-      getFileList(this.baseUrl, this.materialType, this.path_id, this.num, this.page, highLimit)
+      let getFilesMethod = getFileList
+      if (this.cloud_type == 'local_coop') {
+        getFilesMethod = getCoopFileList
+      }
+      getFilesMethod(this.baseUrl, this.materialType, this.path_id, this.num, this.page, highLimit)
         .then((res) => {
           res.data.data.rows.forEach((sucai) => {
             sucai.choosed = false
@@ -293,9 +298,10 @@ export default {
     handleClickTabs(name) {
       this.materialVal = name
     },
-    chooseFolder(path_id) {
+    chooseFolder(path_id, cloud_type) {
       this.path_id = path_id
       this.page = 1
+      this.cloud_type = cloud_type
       this.getFileList(this.highLimit)
     },
     // 文件上传
