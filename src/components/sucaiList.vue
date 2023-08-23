@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-07-23 14:51:28
- * @LastEditTime: 2023-08-22 17:07:02
+ * @LastEditTime: 2023-08-23 11:03:43
  * @LastEditors: 易木
  * @Description: In User Settings Edit
  * @FilePath: \sucai-modal-next\src\components\sucaiList.vue
@@ -257,7 +257,12 @@ export default {
             expand: false,
             cloud_type: 'local_coop',
           }
-          this.foldersMenu.push(coopFolders)
+          if (this.foldersMenu.length == 1) {
+            this.foldersMenu.push(coopFolders)
+          }
+          //  else {
+          //   this.foldersMenu[1] = coopFolders
+          // }
         }
       })
     },
