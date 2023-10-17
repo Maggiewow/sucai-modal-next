@@ -1,8 +1,8 @@
 <!--
  * @Author: your name
  * @Date: 2020-07-23 09:48:43
- * @LastEditTime: 2022-06-30 10:49:35
- * @LastEditors: 赵婷婷
+ * @LastEditTime: 2023-10-17 17:02:20
+ * @LastEditors: 易木
  * @Description: In User Settings Edit
  * @FilePath: \sucai-modal\src\views\Home.vue
 -->
@@ -96,7 +96,7 @@ export default {
   methods: {
     openModal(type) {
       if (type == 'image') {
-        this.fileLimitNum = 10
+        this.fileLimitNum = 1
         this.showPictureOfArticle = true
       } else if (type == 'transcodeVideo') {
         this.materialFrom = 'notSave'

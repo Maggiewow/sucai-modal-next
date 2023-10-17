@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-08-18 14:33:28
- * @LastEditTime: 2023-05-23 14:16:16
+ * @LastEditTime: 2023-10-17 17:33:31
  * @LastEditors: 易木
  * @Description: In User Settings Edit
  * @FilePath: \sucai-modal-next\src\components\coverList.vue
@@ -86,6 +86,21 @@ export default {
       let _this = this
       let choosed = _this.coverList[index].choosed ? true : false
       if (!choosed) {
+        if (_this.fileNumLimit === 1 && _this.chooseNum > 0) {
+          this.coverList = this.coverList.map((item) => ({
+            ...item,
+            choosed: false,
+          }))
+          _this.choosedMaterials = []
+
+          this.$nextTick(() => {
+            _this.$set(this.coverList[index], 'choosed', true)
+            _this.choosedMaterials.push(item)
+
+            Bus.$emit('doMaterials', _this.choosedMaterials)
+          })
+          return
+        }
         if (_this.chooseNum >= this.fileNumLimit) {
           Message.error('已选封面过多！')
         } else {
