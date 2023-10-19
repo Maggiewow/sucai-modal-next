@@ -2,7 +2,7 @@
  * 修改 适应原本的sucai-modal v53 => v56 增加控制并发
  * @Author: your name
  * @Date: 2020-07-23 09:48:43
- * @LastEditTime: 2023-05-22 16:58:16
+ * @LastEditTime: 2023-10-19 11:08:11
  * @LastEditors: 易木
  * @Description: In User Settings Edit
  * @FilePath: \sucai-modal\src\views\Home.vue
@@ -270,7 +270,12 @@ export default {
               // TODO 断点续传
               this.uploadAllChunk(file)
             } else if (status === '2') {
-              this.uploadSuccess(file, extra)
+              if (extra.file_type == this.accept) {
+                this.uploadSuccess(file, extra)
+              } else {
+                this.uploadError(file, { msg: '文件类型选择错误' })
+              }
+              // this.uploadSuccess(file, extra)
             }
           } else {
             console.log('init Error', file, res)
@@ -323,7 +328,13 @@ export default {
         .then((res) => {
           let { data, status } = res
           if (status === 200) {
-            this.uploadSuccess(file, data.data)
+            console.log(data.data)
+            console.log(this.accept)
+            if (data.data.file_type == this.accept) {
+              this.uploadSuccess(file, data.data)
+            } else {
+              this.uploadError(file, { msg: '文件类型选择错误' })
+            }
           } else {
             this.uploadError(file, { msg: data.msg || '文件合并失败' })
           }
