@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-07-23 11:54:45
- * @LastEditTime: 2023-08-22 17:15:55
+ * @LastEditTime: 2024-01-22 19:12:43
  * @LastEditors: 易木
  * @Description: In User Settings Edit
  * @FilePath: \sucai-modal-next\src\components\material-tabs.vue
@@ -141,7 +141,7 @@ export default {
       handler() {
         this.materialType = this.type
         this.materialVal = 'materialVal1'
-        if (this.type == 'coverImg') {
+        if (this.type == 'coverImg' || this.type == 'voiceImg') {
           this.materialType = 'image'
         } else if (this.type == 'transcodeVideo') {
           this.materialType = 'video'
