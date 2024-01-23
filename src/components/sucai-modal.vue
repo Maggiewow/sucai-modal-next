@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-07-23 10:38:24
- * @LastEditTime: 2024-01-22 19:13:56
+ * @LastEditTime: 2024-01-23 10:44:21
  * @LastEditors: 易木
  * @Description: In User Settings Edit
  * @FilePath: \sucai-modal-next\src\components\sucai-modal.vue
@@ -211,8 +211,8 @@ export default {
       } else if (this.materialType == 'coverImg') {
         this.$emit('chooseCoverOk', this.choosedMaterials)
         this.choosedMaterials = []
-      } else if (this.materialType == 'coverImg') {
-        this.$emit('chooseVideoCoverOk', this.choosedMaterials)
+      } else if (this.materialType == 'voiceImg') {
+        this.$emit('chooseVoiceCoverOk', this.choosedMaterials)
         this.choosedMaterials = []
       } else {
         this.$emit('handleMaterialModalOk', this.choosedMaterials)
