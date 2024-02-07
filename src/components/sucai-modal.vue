@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-07-23 10:38:24
- * @LastEditTime: 2024-01-23 10:44:21
+ * @LastEditTime: 2024-02-07 14:29:52
  * @LastEditors: 易木
  * @Description: In User Settings Edit
  * @FilePath: \sucai-modal-next\src\components\sucai-modal.vue
@@ -37,7 +37,7 @@
         <Button
           type="primary"
           :loading="buttonLoading"
-          v-if="materialType == 'voice' && choosedMaterials.length == 1"
+          v-if="materialType == 'voice' && choosedMaterials.length == 1 && allowChooseVoiceCover"
           @click="handleAddVoiceCover"
           >添加封面</Button
         >
@@ -100,6 +100,11 @@ export default {
     },
     // onlyChooseVideo:true时 控制是否转码
     videoNeedTranscode: {
+      type: Boolean,
+      default: false,
+    },
+    //控制是否允许音频选择封面
+    allowChooseVoiceCover: {
       type: Boolean,
       default: false,
     },
